@@ -1,0 +1,89 @@
+name: Llama Cpp Rs Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
+
+jobs:
+  check:
+    name: Run Tests on LLama Cpp Rs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+      - name: Install Compile Deps
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run:
+          sudo apt-get update && sudo apt-get install -y build-essential curl libssl-dev libclang-dev pkg-config cmake git
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - name: Clippy
+        run: cargo clippy
+      - name: Fmt
+        run: cargo fmt --check
+      - name: Test
+        run: cargo test --features sampler
+      - name: Dry-Run Publishing
+        run: RUST_BACKTRACE=1 cargo publish --workspace --verbose --dry-run
+  arm64:
+    name: Check that it builds on various targets
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [ linux/arm64, linux/amd64 ]
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8
+        with:
+          platforms: arm64,amd64
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c
+      - name: Build
+        uses: docker/build-push-action@v7
+        with:
+          file: test-build.Dockerfile
+          target: base-cuda
+          platforms: ${{ matrix.target }}
+  mac:
+    name: Check that it builds on mac
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        run: cargo build --features sampler
+  windows:
+    name: Check that it builds on windows
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Build
+        run: cargo build --features sampler
+      - name: Test
+        run: cargo test --features sampler

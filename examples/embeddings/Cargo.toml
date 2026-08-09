@@ -1,0 +1,21 @@
+[package]
+name = "embeddings"
+version = "0.1.154"
+edition = "2021"
+publish = false
+
+[dependencies]
+llama-cpp-rs = { path = "../../llama-cpp-rs", version = "0.1.0" }
+hf-hub = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+anyhow = { workspace = true }
+encoding_rs = { workspace = true }
+
+[features]
+cuda = ["llama-cpp-rs/cuda"]
+metal = ["llama-cpp-rs/metal"]
+vulkan = ["llama-cpp-rs/vulkan"]
+mkl = ["llama-cpp-rs/mkl"]
+
+[lints]
+workspace = true

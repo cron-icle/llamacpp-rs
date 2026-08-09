@@ -1,0 +1,23 @@
+[package]
+name = "mtmd"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+llama-cpp-rs = { path = "../../llama-cpp-rs", version = "0.1.0", features = ["mtmd"] }
+clap = { workspace = true, features = ["derive"] }
+encoding_rs = { workspace = true }
+
+[features]
+cuda = ["llama-cpp-rs/cuda"]
+metal = ["llama-cpp-rs/metal"]
+vulkan = ["llama-cpp-rs/vulkan"]
+mkl = ["llama-cpp-rs/mkl"]
+
+[lints]
+workspace = true
+
+[[example]]
+name = "mtmd"
+path = "src/mtmd.rs"
