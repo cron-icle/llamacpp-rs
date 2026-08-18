@@ -1160,10 +1160,11 @@ checksum = "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092"
 
 [[package]]
 name = "llama-cpp-rs"
-version = "0.1.154"
+version = "0.1.0"
 dependencies = [
  "encoding_rs",
  "enumflags2",
+ "hf-hub",
  "llama-cpp-rs-sys",
  "llguidance",
  "thiserror",
@@ -1175,7 +1176,7 @@ dependencies = [
 
 [[package]]
 name = "llama-cpp-rs-sys"
-version = "0.1.154"
+version = "0.1.0"
 dependencies = [
  "bindgen",
  "cc",
@@ -1258,7 +1259,7 @@ dependencies = [
 
 [[package]]
 name = "mtmd"
-version = "0.1.86"
+version = "0.1.0"
 dependencies = [
  "clap",
  "encoding_rs",
@@ -1675,7 +1676,7 @@ dependencies = [
 
 [[package]]
 name = "reranker"
-version = "0.1.86"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
