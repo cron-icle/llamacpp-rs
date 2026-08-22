@@ -361,7 +361,12 @@ impl Drop for MtmdContext {
 /// Represents bitmap data for images or audio that can be processed
 /// by the multimodal system. For images, data is stored in RGB format.
 /// For audio, data is stored as PCM F32 samples.
-#[derive(Debug, Clone)]
+///
+/// This type intentionally does not implement `Clone`: it owns a unique
+/// `mtmd_bitmap*` freed on `Drop`, and llama.cpp exposes no bitmap-copy
+/// function, so a derived `Clone` would just duplicate the pointer and
+/// cause a double-free once both copies are dropped.
+#[derive(Debug)]
 pub struct MtmdBitmap {
     pub(crate) bitmap: NonNull<llama_cpp_sys::mtmd_bitmap>,
 }
@@ -981,4 +986,206 @@ pub enum MtmdEvalError {
     /// Evaluation operation failed
     #[error("Eval failed with code: {0}")]
     EvalFailure(i32),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn input_chunk_type_conversions() {
+        assert_eq!(
+            MtmdInputChunkType::from(llama_cpp_sys::MTMD_INPUT_CHUNK_TYPE_TEXT),
+            MtmdInputChunkType::Text
+        );
+        assert_eq!(
+            MtmdInputChunkType::from(llama_cpp_sys::MTMD_INPUT_CHUNK_TYPE_IMAGE),
+            MtmdInputChunkType::Image
+        );
+        assert_eq!(
+            MtmdInputChunkType::from(llama_cpp_sys::MTMD_INPUT_CHUNK_TYPE_AUDIO),
+            MtmdInputChunkType::Audio
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Unknown MTMD input chunk type")]
+    fn input_chunk_type_unknown_value_panics() {
+        let _ = MtmdInputChunkType::from(9999);
+    }
+
+    #[test]
+    fn context_params_default_round_trips_through_c_struct() {
+        let params = MtmdContextParams::default();
+        let raw = llama_cpp_sys::mtmd_context_params::from(&params);
+        let back = MtmdContextParams::from(raw);
+        assert_eq!(back.use_gpu, params.use_gpu);
+        assert_eq!(back.print_timings, params.print_timings);
+        assert_eq!(back.n_threads, params.n_threads);
+        assert_eq!(back.media_marker, params.media_marker);
+        assert_eq!(back.image_min_tokens, params.image_min_tokens);
+        assert_eq!(back.image_max_tokens, params.image_max_tokens);
+    }
+
+    #[test]
+    fn context_params_custom_values_round_trip() {
+        let params = MtmdContextParams {
+            use_gpu: false,
+            print_timings: true,
+            n_threads: 7,
+            media_marker: CString::new("<__custom_marker__>").unwrap(),
+            image_min_tokens: 70,
+            image_max_tokens: 560,
+        };
+        let raw = llama_cpp_sys::mtmd_context_params::from(&params);
+        let back = MtmdContextParams::from(raw);
+        assert_eq!(back.use_gpu, false);
+        assert_eq!(back.print_timings, true);
+        assert_eq!(back.n_threads, 7);
+        assert_eq!(back.media_marker.to_str().unwrap(), "<__custom_marker__>");
+        assert_eq!(back.image_min_tokens, 70);
+        assert_eq!(back.image_max_tokens, 560);
+        let _ = format!("{params:?}");
+        let _ = params.clone();
+    }
+
+    #[test]
+    fn default_marker_is_non_empty_and_matches_placeholder_usage() {
+        let marker = mtmd_default_marker();
+        assert!(!marker.is_empty());
+        let text = format!("before {marker} after");
+        assert!(text.contains(marker));
+    }
+
+    fn red_2x2_rgb() -> Vec<u8> {
+        [255u8, 0, 0].repeat(4)
+    }
+
+    #[test]
+    fn bitmap_from_image_data_succeeds_with_correct_size() {
+        let data = red_2x2_rgb();
+        let bitmap = MtmdBitmap::from_image_data(2, 2, &data).expect("valid image data");
+        assert_eq!(bitmap.nx(), 2);
+        assert_eq!(bitmap.ny(), 2);
+        assert_eq!(bitmap.data().len(), data.len());
+        assert!(!bitmap.is_audio());
+    }
+
+    #[test]
+    fn bitmap_from_image_data_rejects_wrong_size() {
+        let data = vec![0u8; 5]; // not nx*ny*3
+        let err = MtmdBitmap::from_image_data(2, 2, &data).unwrap_err();
+        assert!(matches!(err, MtmdBitmapError::InvalidDataSize));
+        assert_eq!(format!("{err}"), "Invalid data size for bitmap");
+    }
+
+    #[test]
+    fn bitmap_from_audio_data_succeeds() {
+        let samples: Vec<f32> = (0..100).map(|i| (i as f32 * 0.1).sin()).collect();
+        let bitmap = MtmdBitmap::from_audio_data(&samples).expect("valid audio data");
+        assert!(bitmap.is_audio());
+        assert_eq!(
+            bitmap.data().len(),
+            samples.len() * std::mem::size_of::<f32>()
+        );
+    }
+
+    #[test]
+    fn bitmap_id_defaults_to_empty_and_can_be_set() {
+        // mtmd_bitmap_get_id returns a pointer to the bitmap's internal (initially
+        // empty) std::string, never null, so the default is `Some("")`, not `None`.
+        let bitmap = MtmdBitmap::from_image_data(1, 1, &[0, 0, 0]).expect("valid image data");
+        assert_eq!(bitmap.id(), Some(String::new()));
+        bitmap.set_id("my-id").expect("id should be settable");
+        assert_eq!(bitmap.id(), Some("my-id".to_string()));
+    }
+
+    #[test]
+    fn bitmap_set_id_rejects_interior_nul() {
+        let bitmap = MtmdBitmap::from_image_data(1, 1, &[0, 0, 0]).expect("valid image data");
+        let err = bitmap.set_id("bad\0id").unwrap_err();
+        let _ = err; // std::ffi::NulError has no public fields worth asserting on
+    }
+
+    #[test]
+    fn bitmap_debug_does_not_panic() {
+        let bitmap = MtmdBitmap::from_image_data(1, 1, &[1, 2, 3]).expect("valid image data");
+        let _ = format!("{bitmap:?}");
+    }
+
+    #[test]
+    fn input_chunks_new_is_empty() {
+        let chunks = MtmdInputChunks::new();
+        assert_eq!(chunks.len(), 0);
+        assert!(chunks.is_empty());
+        assert_eq!(chunks.total_tokens(), 0);
+        assert_eq!(chunks.get(0).map(|_| ()), None);
+    }
+
+    #[test]
+    fn input_chunks_default_matches_new() {
+        let chunks = MtmdInputChunks::default();
+        assert!(chunks.is_empty());
+    }
+
+    #[test]
+    fn error_display_messages() {
+        assert_eq!(
+            format!("{}", MtmdInitError::NullResult),
+            "MTMD context initialization returned null"
+        );
+        assert_eq!(
+            format!("{}", MtmdBitmapError::NullResult),
+            "Bitmap creation returned null"
+        );
+        assert_eq!(
+            format!("{}", MtmdInputChunksError::NullResult),
+            "Input chunks creation returned null"
+        );
+        assert_eq!(
+            format!("{}", MtmdInputChunkError::NullResult),
+            "Input chunk operation returned null"
+        );
+        assert_eq!(
+            format!("{}", MtmdTokenizeError::BitmapCountMismatch),
+            "Number of bitmaps does not match number of markers"
+        );
+        assert_eq!(
+            format!("{}", MtmdTokenizeError::ImagePreprocessingError),
+            "Image preprocessing error"
+        );
+        assert_eq!(
+            format!("{}", MtmdTokenizeError::UnknownError(42)),
+            "Unknown error: 42"
+        );
+        assert_eq!(
+            format!("{}", MtmdEncodeError::EncodeFailure(3)),
+            "Encode failed with code: 3"
+        );
+        assert_eq!(
+            format!("{}", MtmdEvalError::EvalFailure(5)),
+            "Eval failed with code: 5"
+        );
+    }
+
+    #[test]
+    fn init_error_wraps_nul_error() {
+        let nul_err = CString::new("bad\0path").unwrap_err();
+        let err = MtmdInitError::from(nul_err);
+        assert!(format!("{err}").starts_with("Failed to create CString"));
+    }
+
+    #[test]
+    fn bitmap_error_wraps_nul_error() {
+        let nul_err = CString::new("bad\0path").unwrap_err();
+        let err = MtmdBitmapError::from(nul_err);
+        assert!(format!("{err}").starts_with("Failed to create CString"));
+    }
+
+    #[test]
+    fn tokenize_error_wraps_nul_error() {
+        let nul_err = CString::new("bad\0path").unwrap_err();
+        let err = MtmdTokenizeError::from(nul_err);
+        assert!(format!("{err}").starts_with("Failed to create CString"));
+    }
 }
