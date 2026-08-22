@@ -132,13 +132,13 @@ impl LlamaSampler {
     ///
     /// # Example
     /// ```rust
-    /// use llama_cpp::token::{
+    /// use llamacpp_rs::token::{
     ///    LlamaToken,
     ///    data::LlamaTokenData,
     ///    data_array::LlamaTokenDataArray
     /// };
-    /// use llama_cpp::sampling::LlamaSampler;
-    /// use llama_cpp::llama_backend::LlamaBackend;
+    /// use llamacpp_rs::sampling::LlamaSampler;
+    /// use llamacpp_rs::llama_backend::LlamaBackend;
     /// let backend = LlamaBackend::init().unwrap();
     ///
     /// let mut data_array = LlamaTokenDataArray::new(vec![
@@ -170,12 +170,12 @@ impl LlamaSampler {
     ///
     /// # Example:
     /// ```rust
-    /// use llama_cpp::token::{
+    /// use llamacpp_rs::token::{
     ///    LlamaToken,
     ///    data::LlamaTokenData,
     ///    data_array::LlamaTokenDataArray
     /// };
-    /// use llama_cpp::sampling::LlamaSampler;
+    /// use llamacpp_rs::sampling::LlamaSampler;
     ///
     /// let mut data_array = LlamaTokenDataArray::new(vec![
     ///     LlamaTokenData::new(LlamaToken(0), 0., 0.),
@@ -208,12 +208,12 @@ impl LlamaSampler {
     ///
     /// # Example:
     /// ```rust
-    /// use llama_cpp::token::{
+    /// use llamacpp_rs::token::{
     ///    LlamaToken,
     ///    data::LlamaTokenData,
     ///    data_array::LlamaTokenDataArray
     /// };
-    /// use llama_cpp::sampling::LlamaSampler;
+    /// use llamacpp_rs::sampling::LlamaSampler;
     ///
     /// let mut data_array = LlamaTokenDataArray::new(vec![
     ///     LlamaTokenData::new(LlamaToken(0), 0., 0.),
@@ -244,8 +244,8 @@ impl LlamaSampler {
     ///
     /// # Example
     /// ```rust
-    /// use llama_cpp::sampling::LlamaSampler;
-    /// use llama_cpp::token::{
+    /// use llamacpp_rs::sampling::LlamaSampler;
+    /// use llamacpp_rs::token::{
     ///     LlamaToken,
     ///     data::LlamaTokenData,
     ///     data_array::LlamaTokenDataArray
@@ -598,12 +598,12 @@ impl LlamaSampler {
     ///
     /// # Example:
     /// ```rust
-    /// use llama_cpp::token::{
+    /// use llamacpp_rs::token::{
     ///    LlamaToken,
     ///    data::LlamaTokenData,
     ///    data_array::LlamaTokenDataArray
     /// };
-    /// use llama_cpp::sampling::LlamaSampler;
+    /// use llamacpp_rs::sampling::LlamaSampler;
     ///
     /// let mut data_array = LlamaTokenDataArray::new(vec![
     ///     LlamaTokenData::new(LlamaToken(0), 0., 0.),
@@ -629,8 +629,8 @@ impl LlamaSampler {
     ///
     /// # Example
     /// ```rust
-    /// use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
-    /// use llama_cpp::sampling::LlamaSampler;
+    /// use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// use llamacpp_rs::sampling::LlamaSampler;
     ///
     /// let biases = vec![
     ///     LlamaLogitBias::new(LlamaToken(1), 1.5),  // Increase probability of token 1

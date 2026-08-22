@@ -139,7 +139,7 @@ impl Default for LlamaSplitMode {
 /// The maximum number of devices supported.
 ///
 /// The real maximum number of devices is the lesser one of this value and the value returned by
-/// `llama_cpp::max_devices()`.
+/// `llamacpp_rs::max_devices()`.
 pub const LLAMA_CPP_MAX_DEVICES: usize = 16;
 
 /// Combines the two independent `use_mmap`/`use_mlock` flags this crate's public
@@ -185,7 +185,7 @@ impl LlamaModelParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::model::params::LlamaModelParams;
+    /// # use llamacpp_rs::model::params::LlamaModelParams;
     /// let params = Box::pin(LlamaModelParams::default());
     /// let kv_overrides = params.kv_overrides();
     /// let count = kv_overrides.into_iter().count();
@@ -203,8 +203,8 @@ impl LlamaModelParams {
     /// ```rust
     /// # use std::ffi::{CStr, CString};
     /// use std::pin::pin;
-    /// # use llama_cpp::model::params::LlamaModelParams;
-    /// # use llama_cpp::model::params::kv_overrides::ParamOverrideValue;
+    /// # use llamacpp_rs::model::params::LlamaModelParams;
+    /// # use llamacpp_rs::model::params::kv_overrides::ParamOverrideValue;
     /// let mut params = pin!(LlamaModelParams::default());
     /// let key = CString::new("key").expect("CString::new failed");
     /// params.as_mut().append_kv_override(&key, ParamOverrideValue::Int(50));
@@ -503,7 +503,7 @@ impl LlamaModelParams {
 
     /// sets the number of gpu layers to offload to the GPU.
     /// ```
-    /// # use llama_cpp::model::params::LlamaModelParams;
+    /// # use llamacpp_rs::model::params::LlamaModelParams;
     /// let params = LlamaModelParams::default();
     /// let params = params.with_n_gpu_layers(1);
     /// assert_eq!(params.n_gpu_layers(), 1);
@@ -633,8 +633,8 @@ impl LlamaModelParams {
 
 /// Default parameters for `LlamaModel`. (as defined in llama.cpp by `llama_model_default_params`)
 /// ```
-/// # use llama_cpp::model::params::LlamaModelParams;
-/// use llama_cpp::model::params::LlamaSplitMode;
+/// # use llamacpp_rs::model::params::LlamaModelParams;
+/// use llamacpp_rs::model::params::LlamaSplitMode;
 /// let params = LlamaModelParams::default();
 /// assert_eq!(params.n_gpu_layers(), -1, "n_gpu_layers should be -1");
 /// assert_eq!(params.main_gpu(), 0, "main_gpu should be 0");

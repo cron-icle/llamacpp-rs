@@ -20,7 +20,7 @@ impl LlamaLogitBias {
     ///
     /// # Examples
     /// ```
-    /// # use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// # use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
     /// let token = LlamaToken::new(1);
     /// let bias = LlamaLogitBias::new(token, 1.5);
     /// ```
@@ -35,7 +35,7 @@ impl LlamaLogitBias {
     ///
     /// # Examples
     /// ```
-    /// # use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// # use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
     /// let token = LlamaToken::new(1);
     /// let bias = LlamaLogitBias::new(token, 1.5);
     /// assert_eq!(bias.token(), token);
@@ -49,7 +49,7 @@ impl LlamaLogitBias {
     ///
     /// # Examples
     /// ```
-    /// # use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// # use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
     /// let token = LlamaToken::new(1);
     /// let bias = LlamaLogitBias::new(token, 1.5);
     /// assert_eq!(bias.bias(), 1.5);
@@ -63,7 +63,7 @@ impl LlamaLogitBias {
     ///
     /// # Examples
     /// ```
-    /// # use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// # use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
     /// let token = LlamaToken::new(1);
     /// let mut bias = LlamaLogitBias::new(token, 1.5);
     /// let new_token = LlamaToken::new(2);
@@ -78,7 +78,7 @@ impl LlamaLogitBias {
     ///
     /// # Examples
     /// ```
-    /// # use llama_cpp::token::{LlamaToken, logit_bias::LlamaLogitBias};
+    /// # use llamacpp_rs::token::{LlamaToken, logit_bias::LlamaLogitBias};
     /// let token = LlamaToken::new(1);
     /// let mut bias = LlamaLogitBias::new(token, 1.5);
     /// bias.set_bias(2.0);

@@ -4,7 +4,7 @@ description = "Low Level Bindings to llama.cpp"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/anadi45/llama-cpp-rs"
+repository = "https://github.com/cron-icle/llamacpp-rs"
 links = "llama"
 
 include = [

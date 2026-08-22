@@ -202,7 +202,7 @@ impl<'a> Drop for LlamaBatch<'a> {
     /// Drops the `LlamaBatch`.
     ///
     /// ```
-    /// # use llama_cpp::llama_batch::LlamaBatch;
+    /// # use llamacpp_rs::llama_batch::LlamaBatch;
     /// # use std::error::Error;
     /// # fn main() -> Result<(), Box<dyn Error>> {
     /// let batch = LlamaBatch::new(512, 1);

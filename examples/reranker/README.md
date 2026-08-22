@@ -1,6 +1,6 @@
 # Rust Reranker Implementation
 
-A Rust implementation of cross-encoder based reranking using llama-cpp-rs. Cross-encoder reranking is a more accurate way to determine similarity between queries and documents compared to traditional embedding-based approaches.
+A Rust implementation of cross-encoder based reranking using llamacpp-rs. Cross-encoder reranking is a more accurate way to determine similarity between queries and documents compared to traditional embedding-based approaches.
 
 ## Overview
 

@@ -18,7 +18,7 @@ use crate::token::LlamaToken;
 /// # Examples
 ///
 /// ```
-/// use llama_cpp::mtmd::MtmdInputChunkType;
+/// use llamacpp_rs::mtmd::MtmdInputChunkType;
 ///
 /// let text_chunk = MtmdInputChunkType::Text;
 /// let image_chunk = MtmdInputChunkType::Image;
@@ -55,7 +55,7 @@ impl From<llama_cpp_sys::mtmd_input_chunk_type> for MtmdInputChunkType {
 /// # Examples
 ///
 /// ```
-/// use llama_cpp::mtmd::{MtmdContextParams, mtmd_default_marker};
+/// use llamacpp_rs::mtmd::{MtmdContextParams, mtmd_default_marker};
 /// use std::ffi::CString;
 ///
 /// let params = MtmdContextParams {
@@ -135,7 +135,7 @@ impl From<llama_cpp_sys::mtmd_context_params> for MtmdContextParams {
 /// # Examples
 ///
 /// ```
-/// use llama_cpp::mtmd::MtmdInputText;
+/// use llamacpp_rs::mtmd::MtmdInputText;
 ///
 /// let input = MtmdInputText {
 ///     text: "Describe this image.".to_string(),
@@ -271,7 +271,7 @@ impl MtmdContext {
     /// # Example
     ///
     /// ```no_run
-    /// # use llama_cpp::mtmd::*;
+    /// # use llamacpp_rs::mtmd::*;
     /// # fn example(ctx: &MtmdContext, bitmap: &MtmdBitmap) -> Result<(), Box<dyn std::error::Error>> {
     /// let text = MtmdInputText {
     ///     text: "Here is an image: <__media__>\nDescribe it.".to_string(),
@@ -391,7 +391,7 @@ impl MtmdBitmap {
     /// # Examples
     ///
     /// ```
-    /// use llama_cpp::mtmd::MtmdBitmap;
+    /// use llamacpp_rs::mtmd::MtmdBitmap;
     ///
     /// // Create a 2x2 red image
     /// let red_pixel = [255, 0, 0]; // RGB values for red
@@ -428,7 +428,7 @@ impl MtmdBitmap {
     /// # Examples
     ///
     /// ```
-    /// use llama_cpp::mtmd::MtmdBitmap;
+    /// use llamacpp_rs::mtmd::MtmdBitmap;
     ///
     /// // Create a simple sine wave audio sample
     /// let audio_data: Vec<f32> = (0..100)
@@ -601,7 +601,7 @@ impl MtmdBitmap {
     /// # Examples
     ///
     /// ```no_run
-    /// # use llama_cpp::mtmd::MtmdBitmap;
+    /// # use llamacpp_rs::mtmd::MtmdBitmap;
     /// # fn example(bitmap: &MtmdBitmap) -> Result<(), Box<dyn std::error::Error>> {
     /// bitmap.set_id("image_001")?;
     /// assert_eq!(bitmap.id(), Some("image_001".to_string()));
@@ -648,7 +648,7 @@ impl MtmdInputChunks {
     /// # Examples
     ///
     /// ```
-    /// use llama_cpp::mtmd::MtmdInputChunks;
+    /// use llamacpp_rs::mtmd::MtmdInputChunks;
     ///
     /// let chunks = MtmdInputChunks::new();
     /// assert_eq!(chunks.len(), 0);
@@ -892,7 +892,7 @@ impl Drop for MtmdInputChunk {
 /// # Examples
 ///
 /// ```
-/// use llama_cpp::mtmd::mtmd_default_marker;
+/// use llamacpp_rs::mtmd::mtmd_default_marker;
 ///
 /// let marker = mtmd_default_marker();
 /// assert!(!marker.is_empty());

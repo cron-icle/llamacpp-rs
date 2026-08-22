@@ -15,12 +15,12 @@
 
 use encoding_rs::UTF_8;
 use hf_hub::api::sync::ApiBuilder;
-use llama_cpp::context::params::LlamaContextParams;
-use llama_cpp::llama_backend::LlamaBackend;
-use llama_cpp::llama_batch::LlamaBatch;
-use llama_cpp::model::params::LlamaModelParams;
-use llama_cpp::model::{AddBos, LlamaModel};
-use llama_cpp::sampling::LlamaSampler;
+use llamacpp_rs::context::params::LlamaContextParams;
+use llamacpp_rs::llama_backend::LlamaBackend;
+use llamacpp_rs::llama_batch::LlamaBatch;
+use llamacpp_rs::model::params::LlamaModelParams;
+use llamacpp_rs::model::{AddBos, LlamaModel};
+use llamacpp_rs::sampling::LlamaSampler;
 use std::num::NonZeroU32;
 use std::path::PathBuf;
 use std::pin::pin;

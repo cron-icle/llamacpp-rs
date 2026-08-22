@@ -288,12 +288,12 @@ impl LlamaModel {
     ///
     ///
     /// ```no_run
-    /// use llama_cpp::model::LlamaModel;
+    /// use llamacpp_rs::model::LlamaModel;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// use std::path::Path;
-    /// use llama_cpp::model::AddBos;
-    /// let backend = llama_cpp::llama_backend::LlamaBackend::init()?;
+    /// use llamacpp_rs::model::AddBos;
+    /// let backend = llamacpp_rs::llama_backend::LlamaBackend::init()?;
     /// let model = LlamaModel::load_from_file(&backend, Path::new("path/to/model"), &Default::default())?;
     /// let tokens = model.str_to_token("Hello, World!", AddBos::Always)?;
     /// # Ok(())

@@ -4,11 +4,11 @@
 
 use std::sync::OnceLock;
 
-use llama_cpp::llama_backend::LlamaBackend;
-use llama_cpp::model::params::LlamaModelParams;
-use llama_cpp::model::LlamaModel;
-use llama_cpp::sampling::LlamaSampler;
-use llama_cpp::GrammarError;
+use llamacpp_rs::llama_backend::LlamaBackend;
+use llamacpp_rs::model::params::LlamaModelParams;
+use llamacpp_rs::model::LlamaModel;
+use llamacpp_rs::sampling::LlamaSampler;
+use llamacpp_rs::GrammarError;
 
 const GRAMMAR: &str = r#"root ::= "{" "\"a\"" ":" [0-9] "}""#;
 

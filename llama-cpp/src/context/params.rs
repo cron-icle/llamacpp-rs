@@ -285,7 +285,7 @@ impl From<llama_cpp_sys::ggml_type> for KvCacheType {
 ///
 /// ```rust
 /// # use std::num::NonZeroU32;
-/// # use llama_cpp::context::params::LlamaContextParams;
+/// # use llamacpp_rs::context::params::LlamaContextParams;
 ///
 /// let ctx_params = LlamaContextParams::default()
 ///     .with_n_ctx(NonZeroU32::new(2048));
@@ -309,7 +309,7 @@ unsafe impl Sync for LlamaContextParams {}
 /// Default parameters for `LlamaContext`. (as defined in llama.cpp by `llama_context_default_params`)
 /// ```
 /// # use std::num::NonZeroU32;
-/// # use llama_cpp::context::params::{LlamaContextParams, RopeScalingType};
+/// # use llamacpp_rs::context::params::{LlamaContextParams, RopeScalingType};
 /// let params = LlamaContextParams::default();
 /// assert_eq!(params.n_ctx(), NonZeroU32::new(512), "n_ctx should be 512");
 /// assert_eq!(params.rope_scaling_type(), RopeScalingType::Unspecified);

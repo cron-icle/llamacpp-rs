@@ -1,10 +1,10 @@
 [package]
-name = "llama-cpp"
+name = "llamacpp-rs"
 description = "llama.cpp bindings for Rust (Chronicle fork, mtmd enabled by default)"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/anadi45/llama-cpp-rs"
+repository = "https://github.com/cron-icle/llamacpp-rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

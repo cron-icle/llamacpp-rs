@@ -12,7 +12,7 @@ impl LlamaContextParams {
     ///
     /// ```rust
     /// # use std::num::NonZeroU32;
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// let params = params.with_n_ctx(NonZeroU32::new(2048));
     /// assert_eq!(params.n_ctx(), NonZeroU32::new(2048));
@@ -30,7 +30,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_ctx(), std::num::NonZeroU32::new(512));
     /// ```
@@ -44,7 +44,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///     .with_n_batch(2048);
     /// assert_eq!(params.n_batch(), 2048);
@@ -60,7 +60,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_batch(), 2048);
     /// ```
@@ -74,7 +74,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///     .with_n_ubatch(512);
     /// assert_eq!(params.n_ubatch(), 512);
@@ -90,7 +90,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_ubatch(), 512);
     /// ```
@@ -104,7 +104,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///     .with_n_seq_max(64);
     /// assert_eq!(params.n_seq_max(), 64);
@@ -120,7 +120,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_seq_max(), 1);
     /// ```
@@ -163,7 +163,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///    .with_n_threads(8);
     /// assert_eq!(params.n_threads(), 8);
@@ -179,7 +179,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_threads(), 4);
     /// ```
@@ -193,7 +193,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///    .with_n_threads_batch(8);
     /// assert_eq!(params.n_threads_batch(), 8);
@@ -209,7 +209,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.n_threads_batch(), 4);
     /// ```
@@ -223,7 +223,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, RopeScalingType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, RopeScalingType};
     /// let params = LlamaContextParams::default()
     ///     .with_rope_scaling_type(RopeScalingType::Linear);
     /// assert_eq!(params.rope_scaling_type(), RopeScalingType::Linear);
@@ -239,7 +239,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, RopeScalingType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, RopeScalingType};
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.rope_scaling_type(), RopeScalingType::Unspecified);
     /// ```
@@ -253,7 +253,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, LlamaPoolingType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, LlamaPoolingType};
     /// let params = LlamaContextParams::default()
     ///     .with_pooling_type(LlamaPoolingType::Last);
     /// assert_eq!(params.pooling_type(), LlamaPoolingType::Last);
@@ -269,7 +269,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, LlamaPoolingType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, LlamaPoolingType};
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.pooling_type(), LlamaPoolingType::Unspecified);
     /// ```
@@ -283,7 +283,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, LlamaAttentionType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, LlamaAttentionType};
     /// let params = LlamaContextParams::default()
     ///     .with_attention_type(LlamaAttentionType::Causal);
     /// assert_eq!(params.attention_type(), LlamaAttentionType::Causal);
@@ -299,7 +299,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, LlamaAttentionType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, LlamaAttentionType};
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.attention_type(), LlamaAttentionType::Unspecified);
     /// ```
@@ -329,7 +329,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///    .with_rope_freq_base(0.5);
     /// assert_eq!(params.rope_freq_base(), 0.5);
@@ -345,7 +345,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.rope_freq_base(), 0.0);
     /// ```
@@ -359,7 +359,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///   .with_rope_freq_scale(0.5);
     /// assert_eq!(params.rope_freq_scale(), 0.5);
@@ -375,7 +375,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.rope_freq_scale(), 0.0);
     /// ```
@@ -389,7 +389,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_yarn_ext_factor(1.0);
     /// assert_eq!(params.yarn_ext_factor(), 1.0);
     /// ```
@@ -410,7 +410,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_yarn_attn_factor(2.0);
     /// assert_eq!(params.yarn_attn_factor(), 2.0);
     /// ```
@@ -431,7 +431,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_yarn_beta_fast(16.0);
     /// assert_eq!(params.yarn_beta_fast(), 16.0);
     /// ```
@@ -452,7 +452,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_yarn_beta_slow(2.0);
     /// assert_eq!(params.yarn_beta_slow(), 2.0);
     /// ```
@@ -473,7 +473,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_yarn_orig_ctx(4096);
     /// assert_eq!(params.yarn_orig_ctx(), 4096);
     /// ```
@@ -494,7 +494,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_defrag_thold(0.1);
     /// assert_eq!(params.defrag_thold(), 0.1);
     /// ```
@@ -515,7 +515,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, KvCacheType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, KvCacheType};
     /// let params = LlamaContextParams::default().with_type_k(KvCacheType::Q4_0);
     /// assert_eq!(params.type_k(), KvCacheType::Q4_0);
     /// ```
@@ -530,7 +530,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// let _ = params.type_k();
     /// ```
@@ -544,7 +544,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::{LlamaContextParams, KvCacheType};
+    /// # use llamacpp_rs::context::params::{LlamaContextParams, KvCacheType};
     /// let params = LlamaContextParams::default().with_type_v(KvCacheType::Q4_1);
     /// assert_eq!(params.type_v(), KvCacheType::Q4_1);
     /// ```
@@ -559,7 +559,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// let _ = params.type_v();
     /// ```
@@ -573,7 +573,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///    .with_embeddings(true);
     /// assert!(params.embeddings());
@@ -589,7 +589,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert!(!params.embeddings());
     /// ```
@@ -603,7 +603,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///     .with_offload_kqv(false);
     /// assert_eq!(params.offload_kqv(), false);
@@ -619,7 +619,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.offload_kqv(), true);
     /// ```
@@ -633,7 +633,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_no_perf(true);
     /// assert!(params.no_perf());
     /// ```
@@ -654,7 +654,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_op_offload(false);
     /// assert_eq!(params.op_offload(), false);
     /// ```
@@ -675,7 +675,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default()
     ///     .with_swa_full(false);
     /// assert_eq!(params.swa_full(), false);
@@ -691,7 +691,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// assert_eq!(params.swa_full(), true);
     /// ```
@@ -705,7 +705,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default().with_kv_unified(true);
     /// assert!(params.kv_unified());
     /// ```
@@ -720,7 +720,7 @@ impl LlamaContextParams {
     /// # Examples
     ///
     /// ```rust
-    /// # use llama_cpp::context::params::LlamaContextParams;
+    /// # use llamacpp_rs::context::params::LlamaContextParams;
     /// let params = LlamaContextParams::default();
     /// let _ = params.kv_unified();
     /// ```

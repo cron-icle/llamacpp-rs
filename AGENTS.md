@@ -30,8 +30,8 @@ git submodule update --init --recursive
 
 - This project tracks llama.cpp closely and does not follow semver
   meaningfully.
-- Keep unsafe FFI concerns in `llama-cpp-rs-sys` and safe abstractions in
-  `llama-cpp-rs` — don't leak raw pointers or unsafe APIs into the safe
+- Keep unsafe FFI concerns in `llama-cpp-sys` and safe abstractions in
+  `llamacpp-rs` — don't leak raw pointers or unsafe APIs into the safe
   wrapper's public surface.
 - Workspace lints (`missing_docs`, `missing_debug_implementations`,
   `clippy::pedantic`) are warnings — new public items should have docs.
@@ -40,6 +40,6 @@ git submodule update --init --recursive
 
 - `cargo build` / `cargo build --features cuda|metal|vulkan|rocm|opencl`
   as relevant to the change.
-- `cargo test` for the `llama-cpp-rs` crate.
+- `cargo test` for the `llamacpp-rs` crate.
 - `cargo run --release --bin simple -- ...` or the other examples for
   end-to-end checks against a real model when relevant.

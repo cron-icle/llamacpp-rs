@@ -1,7 +1,7 @@
-# llama-cpp-rs
+# llamacpp-rs
 
 Rust bindings to [llama.cpp](https://github.com/ggml-org/llama.cpp): a low-level
-`llama-cpp-sys` FFI crate and a safe `llama-cpp` wrapper on top of it,
+`llama-cpp-sys` FFI crate and a safe `llamacpp-rs` wrapper on top of it,
 close to the underlying C API, with multimodal (`mtmd`) support enabled by
 default so text, vision, and audio inputs all work out of the box.
 
@@ -37,14 +37,14 @@ llama-cpp/                    safe, idiomatic Rust wrapper
   bridges llama.cpp's C++-only APIs (grammar, speculative decoding, mtmd) to
   a flat C surface lives under `ffi/`. Everything here is `unsafe` and maps
   almost 1:1 onto the C headers.
-- [`llama-cpp`](llama-cpp) depends on `llama-cpp-sys` and wraps
+- [`llamacpp-rs`](llama-cpp) depends on `llama-cpp-sys` and wraps
   those raw bindings in safe, ergonomic Rust types — handling lifetimes,
   ownership, and error handling so consumers never touch raw pointers.
   This is the crate most users depend on directly.
 
 Keeping the FFI and safe-wrapper concerns in separate crates means the
 `-sys` crate can be versioned/rebuilt independently as llama.cpp changes
-upstream, while the safe API in `llama-cpp` stays stable for
+upstream, while the safe API in `llamacpp-rs` stays stable for
 consumers.
 
 ## Try it
@@ -53,7 +53,7 @@ Clone the repo (with submodules — llama.cpp itself is vendored as one):
 
 ```bash
 git clone --recursive <this-repo-url>
-cd llama-cpp-rs
+cd llamacpp-rs
 ```
 
 Run the simple example (add `--features cuda` if you have a CUDA GPU):

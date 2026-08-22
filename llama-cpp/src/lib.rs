@@ -275,8 +275,8 @@ pub enum LlamaLoraAdapterRemoveError {
 
 /// get the time (in microseconds) according to llama.cpp
 /// ```
-/// # use llama_cpp::llama_time_us;
-/// # use llama_cpp::llama_backend::LlamaBackend;
+/// # use llamacpp_rs::llama_time_us;
+/// # use llamacpp_rs::llama_backend::LlamaBackend;
 /// let backend = LlamaBackend::init().unwrap();
 /// let time = llama_time_us();
 /// assert!(time > 0);
@@ -288,7 +288,7 @@ pub fn llama_time_us() -> i64 {
 
 /// get the max number of devices according to llama.cpp (this is generally cuda devices)
 /// ```
-/// # use llama_cpp::max_devices;
+/// # use llamacpp_rs::max_devices;
 /// let max_devices = max_devices();
 /// assert!(max_devices >= 0);
 /// ```
@@ -299,7 +299,7 @@ pub fn max_devices() -> usize {
 
 /// is memory mapping supported according to llama.cpp
 /// ```
-/// # use llama_cpp::mmap_supported;
+/// # use llamacpp_rs::mmap_supported;
 /// let mmap_supported = mmap_supported();
 /// if mmap_supported {
 ///   println!("mmap_supported!");
@@ -312,7 +312,7 @@ pub fn mmap_supported() -> bool {
 
 /// is memory locking supported according to llama.cpp
 /// ```
-/// # use llama_cpp::mlock_supported;
+/// # use llamacpp_rs::mlock_supported;
 /// let mlock_supported = mlock_supported();
 /// if mlock_supported {
 ///    println!("mlock_supported!");
@@ -435,9 +435,9 @@ pub enum SamplerAcceptError {
 ///
 /// ```
 /// # use std::time::Duration;
-/// # use llama_cpp::llama_backend::LlamaBackend;
+/// # use llamacpp_rs::llama_backend::LlamaBackend;
 /// let backend = LlamaBackend::init().unwrap();
-/// use llama_cpp::ggml_time_us;
+/// use llamacpp_rs::ggml_time_us;
 ///
 /// let start = ggml_time_us();
 ///
@@ -456,7 +456,7 @@ pub fn ggml_time_us() -> i64 {
 /// checks if mlock is supported
 ///
 /// ```
-/// # use llama_cpp::llama_supports_mlock;
+/// # use llamacpp_rs::llama_supports_mlock;
 ///
 /// if llama_supports_mlock() {
 ///   println!("mlock is supported!");
