@@ -4,11 +4,13 @@ Guidance for coding agents working in this repository.
 
 ## Project layout
 
-- `llama-cpp-rs-sys/` — low-level, unsafe FFI crate. Vendors upstream
-  `ggml-org/llama.cpp` as a git submodule at `llama-cpp-rs-sys/llama.cpp`,
+- `llama-cpp-sys/` — low-level, unsafe FFI crate. Vendors upstream
+  `ggml-org/llama.cpp` as a git submodule at `llama-cpp-sys/vendor/llama.cpp`,
   builds it via `cmake` in `build.rs`, and generates raw bindings with
-  `bindgen`. Do not hand-edit generated bindings.
-- `llama-cpp-rs/` — safe, idiomatic Rust wrapper around the sys crate.
+  `bindgen`. Hand-written glue headers/sources that bridge llama.cpp's C++
+  APIs to a flat C surface live under `llama-cpp-sys/ffi/`. Do not hand-edit
+  generated bindings.
+- `llama-cpp/` — safe, idiomatic Rust wrapper around the sys crate.
   Most feature work (model loading, context/KV-cache, batching, sampling,
   grammars, chat templates, mtmd multimodal support) belongs here.
 - `examples/` — runnable examples (`simple`, `embeddings`, `reranker`,

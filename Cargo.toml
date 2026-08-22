@@ -1,8 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
-  "llama-cpp-rs-sys",
-  "llama-cpp-rs",
+  "llama-cpp-sys",
+  "llama-cpp",
   "examples/embeddings",
   "examples/simple",
   "examples/reranker",

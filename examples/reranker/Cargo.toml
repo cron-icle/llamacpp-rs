@@ -5,17 +5,17 @@ edition = "2021"
 publish = false
 
 [dependencies]
-llama-cpp-rs = { path = "../../llama-cpp-rs", version = "0.1.0" }
+llama-cpp = { path = "../../llama-cpp", version = "0.1.0" }
 hf-hub = { workspace = true }
 clap = { workspace = true, features = ["derive"] }
 anyhow = { workspace = true }
 encoding_rs = { workspace = true }
 
 [features]
-cuda = ["llama-cpp-rs/cuda"]
-metal = ["llama-cpp-rs/metal"]
-vulkan = ["llama-cpp-rs/vulkan"]
-mkl = ["llama-cpp-rs/mkl"]
+cuda = ["llama-cpp/cuda"]
+metal = ["llama-cpp/metal"]
+vulkan = ["llama-cpp/vulkan"]
+mkl = ["llama-cpp/mkl"]
 
 [lints]
 workspace = true
