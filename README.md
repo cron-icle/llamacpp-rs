@@ -77,6 +77,31 @@ llama.cpp submodule with:
 git submodule update --init --recursive
 ```
 
+## Testing
+
+The full test suite covers unit tests, doctests, and integration tests that
+exercise model loading, tokenization, batching, decoding, sampling,
+KV-cache manipulation, and session/state save-load against a real (tiny)
+GGUF model downloaded from Hugging Face on first run.
+
+Run it directly (requires the llama.cpp submodule checked out and network
+access on first run to fetch the tiny test model):
+
+```sh
+./run-tests.sh              # fmt check + clippy + full test suite
+./run-tests.sh --tests-only # skip fmt/clippy, just run the tests
+```
+
+Or run it fully isolated in Docker, without touching your host toolchain:
+
+```sh
+docker build -f test.Dockerfile -t llama-cpp-rs-test .
+docker run --rm llama-cpp-rs-test
+```
+
+This is the same command CI runs as a merge gate on every push and pull
+request to `main` (see below).
+
 ## Features
 
 See each crate's `Cargo.toml` for the full feature list (CUDA, Metal,
@@ -87,7 +112,9 @@ default.
 ## CI/CD
 
 `.github/workflows/llama-cpp-rs-check.yml` builds and tests on
-Linux/macOS/Windows/arm64 on every push and pull request to `main`.
+Linux/macOS/Windows/arm64 on every push and pull request to `main`, and
+gates merges on the standalone Docker test suite described above
+(`test.Dockerfile` / `run-tests.sh`).
 `.github/workflows/update-llama-cpp.yml` runs nightly to bump the
 vendored llama.cpp submodule and open a PR.
 
