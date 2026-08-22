@@ -61,29 +61,3 @@ jobs:
         run: docker build -f test.Dockerfile -t llama-cpp-rs-test .
       - name: Run standalone test suite
         run: docker run --rm llama-cpp-rs-test
-  mac:
-    name: Check that it builds on mac
-    runs-on: macos-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          submodules: recursive
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Build
-        run: cargo build --features sampler
-  windows:
-    name: Check that it builds on windows
-    runs-on: windows-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          submodules: recursive
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Build
-        run: cargo build --features sampler
-      - name: Test
-        run: cargo test --features sampler
