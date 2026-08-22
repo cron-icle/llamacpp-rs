@@ -88,9 +88,11 @@ default.
 
 `.github/workflows/llama-cpp-rs-check.yml` builds and tests on
 Linux/macOS/Windows/arm64 on every push and pull request to `main`.
-`.github/workflows/publish-upon-release.yml` publishes both crates to
-crates.io on a tagged GitHub release, gated on a `CARGO_REGISTRY_TOKEN`
-repository secret.
+`.github/workflows/update-llama-cpp.yml` runs nightly to bump the
+vendored llama.cpp submodule and open a PR.
+
+Neither crate is published to crates.io yet — a publish workflow can be
+added back when that changes.
 
 ## License
 
