@@ -130,3 +130,59 @@ impl Display for LlamaTimings {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample() -> LlamaTimings {
+        LlamaTimings::new(1.0, 2.0, 3.0, 4.0, 5, 6, 1)
+    }
+
+    #[test]
+    fn getters_reflect_constructor_args() {
+        let timings = sample();
+        assert_eq!(timings.t_start_ms(), 1.0);
+        assert_eq!(timings.t_load_ms(), 2.0);
+        assert_eq!(timings.t_p_eval_ms(), 3.0);
+        assert_eq!(timings.t_eval_ms(), 4.0);
+        assert_eq!(timings.n_p_eval(), 5);
+        assert_eq!(timings.n_eval(), 6);
+    }
+
+    #[test]
+    fn setters_update_fields() {
+        let mut timings = sample();
+        timings.set_t_start_ms(10.0);
+        timings.set_t_load_ms(20.0);
+        timings.set_t_p_eval_ms(30.0);
+        timings.set_t_eval_ms(40.0);
+        timings.set_n_p_eval(50);
+        timings.set_n_eval(60);
+
+        assert_eq!(timings.t_start_ms(), 10.0);
+        assert_eq!(timings.t_load_ms(), 20.0);
+        assert_eq!(timings.t_p_eval_ms(), 30.0);
+        assert_eq!(timings.t_eval_ms(), 40.0);
+        assert_eq!(timings.n_p_eval(), 50);
+        assert_eq!(timings.n_eval(), 60);
+    }
+
+    #[test]
+    fn display_matches_expected_format() {
+        let timings = sample();
+        let expected = "load time = 2.00 ms\n\
+prompt eval time = 3.00 ms / 5 tokens (0.60 ms per token, 1666.67 tokens per second)\n\
+eval time = 4.00 ms / 6 runs (0.67 ms per token, 1500.00 tokens per second)\n";
+        assert_eq!(format!("{timings}"), expected);
+    }
+
+    #[test]
+    fn clone_and_copy_and_debug() {
+        let timings = sample();
+        let copied = timings;
+        let cloned = timings.clone();
+        assert_eq!(copied.t_start_ms(), cloned.t_start_ms());
+        let _ = format!("{timings:?}");
+    }
+}

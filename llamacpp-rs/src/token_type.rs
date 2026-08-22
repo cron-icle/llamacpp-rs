@@ -55,3 +55,42 @@ pub enum LlamaTokenTypeFromIntError {
     #[error("Unknown Value {0}")]
     UnknownValue(std::ffi::c_uint),
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn valid_bitflag_values_round_trip() {
+        let attrs = LlamaTokenAttrs::try_from(llama_cpp_sys::LLAMA_TOKEN_ATTR_NORMAL)
+            .expect("valid attr value should convert");
+        assert!(attrs.contains(LlamaTokenAttr::Normal));
+    }
+
+    #[test]
+    fn invalid_bitflag_value_errors() {
+        let err = LlamaTokenAttrs::try_from(1 << 31).unwrap_err();
+        assert_eq!(err, LlamaTokenTypeFromIntError::UnknownValue(1 << 31));
+        assert_eq!(format!("{err}"), format!("Unknown Value {}", 1u32 << 31));
+    }
+
+    #[test]
+    fn deref_and_deref_mut_expose_bitflags() {
+        let mut attrs = LlamaTokenAttrs::try_from(llama_cpp_sys::LLAMA_TOKEN_ATTR_NORMAL)
+            .expect("valid attr value should convert");
+        assert!(attrs.contains(LlamaTokenAttr::Normal));
+        attrs.insert(LlamaTokenAttr::Control);
+        assert!(attrs.contains(LlamaTokenAttr::Control));
+    }
+
+    #[test]
+    fn clone_copy_debug_eq() {
+        let attrs = LlamaTokenAttrs::try_from(llama_cpp_sys::LLAMA_TOKEN_ATTR_NORMAL)
+            .expect("valid attr value should convert");
+        let copied = attrs;
+        let cloned = attrs.clone();
+        assert_eq!(attrs, copied);
+        assert_eq!(attrs, cloned);
+        let _ = format!("{attrs:?}");
+    }
+}

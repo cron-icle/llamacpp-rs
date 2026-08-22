@@ -32,3 +32,33 @@ impl LlamaToken {
         Self(token_id)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new_wraps_the_id() {
+        assert_eq!(LlamaToken::new(42), LlamaToken(42));
+    }
+
+    #[test]
+    fn display_prints_the_inner_id() {
+        assert_eq!(format!("{}", LlamaToken::new(7)), "7");
+    }
+
+    #[test]
+    fn ordering_and_equality() {
+        assert!(LlamaToken::new(1) < LlamaToken::new(2));
+        assert_eq!(LlamaToken::new(3), LlamaToken::new(3));
+        assert_ne!(LlamaToken::new(3), LlamaToken::new(4));
+    }
+
+    #[test]
+    fn debug_and_hash_are_derived() {
+        let token = LlamaToken::new(1);
+        let _ = format!("{token:?}");
+        let copied = token;
+        assert_eq!(token, copied);
+    }
+}

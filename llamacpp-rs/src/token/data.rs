@@ -103,3 +103,37 @@ impl LlamaTokenData {
         self.data.p = p;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn getters_reflect_constructor_args() {
+        let data = LlamaTokenData::new(LlamaToken::new(1), 2.0, 3.0);
+        assert_eq!(data.id(), LlamaToken::new(1));
+        assert_eq!(data.logit(), 2.0);
+        assert_eq!(data.p(), 3.0);
+    }
+
+    #[test]
+    fn setters_update_fields() {
+        let mut data = LlamaTokenData::new(LlamaToken::new(1), 2.0, 3.0);
+        data.set_id(LlamaToken::new(9));
+        data.set_logit(8.0);
+        data.set_p(7.0);
+        assert_eq!(data.id(), LlamaToken::new(9));
+        assert_eq!(data.logit(), 8.0);
+        assert_eq!(data.p(), 7.0);
+    }
+
+    #[test]
+    fn clone_copy_debug_eq() {
+        let data = LlamaTokenData::new(LlamaToken::new(1), 2.0, 3.0);
+        let copied = data;
+        let cloned = data.clone();
+        assert_eq!(data, copied);
+        assert_eq!(data, cloned);
+        let _ = format!("{data:?}");
+    }
+}

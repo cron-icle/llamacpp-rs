@@ -156,3 +156,67 @@ impl LlamaTokenDataArray {
             .expect("Greedy sampler failed to select a token!")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn candidates() -> Vec<LlamaTokenData> {
+        vec![
+            LlamaTokenData::new(LlamaToken::new(0), 0.1, 0.1),
+            LlamaTokenData::new(LlamaToken::new(1), 0.9, 0.9),
+            LlamaTokenData::new(LlamaToken::new(2), 0.3, 0.3),
+        ]
+    }
+
+    #[test]
+    fn new_stores_data_and_sorted_flag() {
+        let array = LlamaTokenDataArray::new(candidates(), false);
+        assert_eq!(array.data.len(), 3);
+        assert!(!array.sorted);
+        assert_eq!(array.selected, None);
+    }
+
+    #[test]
+    fn from_iter_collects_items() {
+        let array = LlamaTokenDataArray::from_iter(candidates(), true);
+        assert_eq!(array.data.len(), 3);
+        assert!(array.sorted);
+    }
+
+    #[test]
+    fn selected_token_is_none_before_selection() {
+        let array = LlamaTokenDataArray::new(candidates(), false);
+        assert_eq!(array.selected_token(), None);
+    }
+
+    #[test]
+    fn selected_token_reflects_selected_index() {
+        let mut array = LlamaTokenDataArray::new(candidates(), false);
+        array.selected = Some(1);
+        assert_eq!(array.selected_token(), Some(LlamaToken::new(1)));
+    }
+
+    #[test]
+    fn sample_token_greedy_picks_highest_logit() {
+        let mut array = LlamaTokenDataArray::new(candidates(), false);
+        let token = array.sample_token_greedy();
+        assert_eq!(token, LlamaToken::new(1));
+    }
+
+    #[test]
+    fn with_sampler_applies_sampler_and_returns_self() {
+        let array = LlamaTokenDataArray::new(candidates(), false);
+        let mut sampler = LlamaSampler::greedy();
+        let array = array.with_sampler(&mut sampler);
+        assert_eq!(array.selected_token(), Some(LlamaToken::new(1)));
+    }
+
+    #[test]
+    fn clone_and_debug_and_eq() {
+        let array = LlamaTokenDataArray::new(candidates(), false);
+        let cloned = array.clone();
+        assert_eq!(array, cloned);
+        let _ = format!("{array:?}");
+    }
+}

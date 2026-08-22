@@ -88,3 +88,34 @@ impl LlamaLogitBias {
         self.logit_bias.bias = bias;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn getters_reflect_constructor_args() {
+        let bias = LlamaLogitBias::new(LlamaToken::new(1), 1.5);
+        assert_eq!(bias.token(), LlamaToken::new(1));
+        assert_eq!(bias.bias(), 1.5);
+    }
+
+    #[test]
+    fn setters_update_fields() {
+        let mut bias = LlamaLogitBias::new(LlamaToken::new(1), 1.5);
+        bias.set_token(LlamaToken::new(2));
+        bias.set_bias(2.0);
+        assert_eq!(bias.token(), LlamaToken::new(2));
+        assert_eq!(bias.bias(), 2.0);
+    }
+
+    #[test]
+    fn clone_copy_debug_eq() {
+        let bias = LlamaLogitBias::new(LlamaToken::new(1), 1.5);
+        let copied = bias;
+        let cloned = bias.clone();
+        assert_eq!(bias, copied);
+        assert_eq!(bias, cloned);
+        let _ = format!("{bias:?}");
+    }
+}
