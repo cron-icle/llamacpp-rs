@@ -225,7 +225,7 @@ impl LlamaModelParams {
     ) {
         let kv_override = self
             .kv_overrides
-            .get_mut(0)
+            .last_mut()
             .expect("kv_overrides did not have a next allocated");
 
         assert_eq!(kv_override.key[0], 0, "last kv_override was not empty");
@@ -269,7 +269,7 @@ impl LlamaModelParams {
     pub fn add_cpu_buft_override(mut self: Pin<&mut Self>, key: &CStr) {
         let buft_override = self
             .buft_overrides
-            .get_mut(0)
+            .last_mut()
             .expect("buft_overrides did not have a next allocated");
 
         assert!(
@@ -693,6 +693,20 @@ mod tests {
         assert_eq!(
             params.tensor_buft_override_patterns(),
             vec!["\\.ffn_(up|down|gate)_(ch|)exps".to_owned()],
+        );
+    }
+
+    #[test]
+    fn tensor_buft_override_patterns_reads_back_multiple_overrides() {
+        // Regression test: add_cpu_buft_override used to always slot into index 0 of the
+        // overrides buffer instead of the last (empty) entry, so a second call would panic
+        // with "last buft_override was not empty" the moment two overrides were added.
+        let mut params = pin!(LlamaModelParams::default());
+        params.as_mut().add_cpu_buft_override(c"pattern_one");
+        params.as_mut().add_cpu_buft_override(c"pattern_two");
+        assert_eq!(
+            params.tensor_buft_override_patterns(),
+            vec!["pattern_one".to_owned(), "pattern_two".to_owned()],
         );
     }
 

@@ -129,3 +129,83 @@ impl Iterator for KvOverrideValueIterator<'_> {
         Some((key, value))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::params::LlamaModelParams;
+    use std::pin::pin;
+
+    #[test]
+    fn empty_overrides_iterate_to_nothing() {
+        let params = Box::pin(LlamaModelParams::default());
+        assert_eq!(params.kv_overrides().into_iter().count(), 0);
+    }
+
+    #[test]
+    fn bool_override_round_trips() {
+        let mut params = pin!(LlamaModelParams::default());
+        let key = CString::new("flag").unwrap();
+        params
+            .as_mut()
+            .append_kv_override(&key, ParamOverrideValue::Bool(true));
+
+        let overrides = params.kv_overrides().into_iter().collect::<Vec<_>>();
+        assert_eq!(overrides.len(), 1);
+        assert_eq!(overrides[0].0, key);
+        assert_eq!(overrides[0].1, ParamOverrideValue::Bool(true));
+    }
+
+    #[test]
+    fn float_override_round_trips() {
+        let mut params = pin!(LlamaModelParams::default());
+        let key = CString::new("ratio").unwrap();
+        params
+            .as_mut()
+            .append_kv_override(&key, ParamOverrideValue::Float(2.5));
+
+        let overrides = params.kv_overrides().into_iter().collect::<Vec<_>>();
+        assert_eq!(overrides[0].1, ParamOverrideValue::Float(2.5));
+    }
+
+    #[test]
+    fn str_override_round_trips() {
+        let mut params = pin!(LlamaModelParams::default());
+        let key = CString::new("name").unwrap();
+        let mut buf = [0 as std::os::raw::c_char; 128];
+        for (i, b) in b"hello".iter().enumerate() {
+            buf[i] = *b as std::os::raw::c_char;
+        }
+        params
+            .as_mut()
+            .append_kv_override(&key, ParamOverrideValue::Str(buf));
+
+        let overrides = params.kv_overrides().into_iter().collect::<Vec<_>>();
+        assert_eq!(overrides[0].1, ParamOverrideValue::Str(buf));
+    }
+
+    #[test]
+    fn multiple_overrides_all_present() {
+        let mut params = pin!(LlamaModelParams::default());
+        params
+            .as_mut()
+            .append_kv_override(&CString::new("a").unwrap(), ParamOverrideValue::Int(1));
+        params
+            .as_mut()
+            .append_kv_override(&CString::new("b").unwrap(), ParamOverrideValue::Int(2));
+
+        let overrides = params.kv_overrides().into_iter().collect::<Vec<_>>();
+        assert_eq!(overrides.len(), 2);
+        assert_eq!(overrides[0].1, ParamOverrideValue::Int(1));
+        assert_eq!(overrides[1].1, ParamOverrideValue::Int(2));
+    }
+
+    #[test]
+    fn debug_impls_do_not_panic() {
+        let params = Box::pin(LlamaModelParams::default());
+        let kv_overrides = params.kv_overrides();
+        let _ = format!("{kv_overrides:?}");
+        let iter = kv_overrides.into_iter();
+        let _ = format!("{iter:?}");
+    }
+}

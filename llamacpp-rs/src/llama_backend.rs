@@ -236,4 +236,29 @@ mod tests {
         let invalid = NumaStrategy::try_from(invalid);
         assert_eq!(invalid, Err(InvalidNumaStrategy(invalid.unwrap_err().0)));
     }
+
+    #[test]
+    fn init_reports_capabilities_and_can_void_logs() {
+        let mut backend = match LlamaBackend::init() {
+            Ok(backend) => backend,
+            // Another test in this binary (or a doctest) may have already
+            // initialized the backend; the capability queries below don't
+            // require ownership of a fresh backend to be meaningful.
+            Err(crate::LlamaCppError::BackendAlreadyInitialized) => return,
+            Err(e) => panic!("unexpected backend init error: {e:?}"),
+        };
+
+        // These are just smoke checks: the values are platform-dependent, so
+        // we only assert the calls complete without panicking/crashing.
+        let _ = backend.supports_gpu_offload();
+        let _ = backend.supports_mmap();
+        let _ = backend.supports_mlock();
+        backend.void_logs();
+
+        drop(backend);
+
+        // Backend can be re-initialized after being dropped.
+        let backend = LlamaBackend::init().expect("backend should be reinitializable");
+        drop(backend);
+    }
 }
