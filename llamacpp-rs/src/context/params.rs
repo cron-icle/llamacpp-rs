@@ -320,3 +320,143 @@ impl Default for LlamaContextParams {
         Self { context_params }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rope_scaling_type_round_trips_all_variants() {
+        for variant in [
+            RopeScalingType::Unspecified,
+            RopeScalingType::None,
+            RopeScalingType::Linear,
+            RopeScalingType::Yarn,
+        ] {
+            let raw = i32::from(variant);
+            assert_eq!(RopeScalingType::from(raw), variant);
+        }
+    }
+
+    #[test]
+    fn rope_scaling_type_unknown_value_is_unspecified() {
+        assert_eq!(RopeScalingType::from(999), RopeScalingType::Unspecified);
+    }
+
+    #[test]
+    fn pooling_type_round_trips_all_variants() {
+        for variant in [
+            LlamaPoolingType::Unspecified,
+            LlamaPoolingType::None,
+            LlamaPoolingType::Mean,
+            LlamaPoolingType::Cls,
+            LlamaPoolingType::Last,
+            LlamaPoolingType::Rank,
+        ] {
+            let raw = i32::from(variant);
+            assert_eq!(LlamaPoolingType::from(raw), variant);
+        }
+    }
+
+    #[test]
+    fn pooling_type_unknown_value_is_unspecified() {
+        assert_eq!(LlamaPoolingType::from(999), LlamaPoolingType::Unspecified);
+    }
+
+    #[test]
+    fn attention_type_round_trips_all_variants() {
+        for variant in [
+            LlamaAttentionType::Unspecified,
+            LlamaAttentionType::Causal,
+            LlamaAttentionType::NonCausal,
+        ] {
+            let raw = i32::from(variant);
+            assert_eq!(LlamaAttentionType::from(raw), variant);
+        }
+    }
+
+    #[test]
+    fn attention_type_unknown_value_is_unspecified() {
+        assert_eq!(
+            LlamaAttentionType::from(999),
+            LlamaAttentionType::Unspecified
+        );
+    }
+
+    #[test]
+    fn context_type_round_trips_known_variants() {
+        for variant in [LlamaContextType::Default, LlamaContextType::Mtp] {
+            let raw = llama_cpp_sys::llama_context_type::from(variant);
+            assert_eq!(LlamaContextType::from(raw), variant);
+        }
+    }
+
+    #[test]
+    fn context_type_unknown_value_round_trips_as_unknown() {
+        let raw: llama_cpp_sys::llama_context_type = 999;
+        assert_eq!(LlamaContextType::from(raw), LlamaContextType::Unknown(raw));
+        assert_eq!(
+            llama_cpp_sys::llama_context_type::from(LlamaContextType::Unknown(raw)),
+            raw
+        );
+    }
+
+    #[test]
+    fn kv_cache_type_round_trips_all_known_variants() {
+        let variants = [
+            KvCacheType::F32,
+            KvCacheType::F16,
+            KvCacheType::Q4_0,
+            KvCacheType::Q4_1,
+            KvCacheType::Q5_0,
+            KvCacheType::Q5_1,
+            KvCacheType::Q8_0,
+            KvCacheType::Q8_1,
+            KvCacheType::Q2_K,
+            KvCacheType::Q3_K,
+            KvCacheType::Q4_K,
+            KvCacheType::Q5_K,
+            KvCacheType::Q6_K,
+            KvCacheType::Q8_K,
+            KvCacheType::IQ2_XXS,
+            KvCacheType::IQ2_XS,
+            KvCacheType::IQ3_XXS,
+            KvCacheType::IQ1_S,
+            KvCacheType::IQ4_NL,
+            KvCacheType::IQ3_S,
+            KvCacheType::IQ2_S,
+            KvCacheType::IQ4_XS,
+            KvCacheType::I8,
+            KvCacheType::I16,
+            KvCacheType::I32,
+            KvCacheType::I64,
+            KvCacheType::F64,
+            KvCacheType::IQ1_M,
+            KvCacheType::BF16,
+            KvCacheType::TQ1_0,
+            KvCacheType::TQ2_0,
+            KvCacheType::MXFP4,
+        ];
+        for variant in variants {
+            let raw = llama_cpp_sys::ggml_type::from(variant);
+            assert_eq!(KvCacheType::from(raw), variant);
+        }
+    }
+
+    #[test]
+    fn kv_cache_type_unknown_value_round_trips_as_unknown() {
+        let raw: llama_cpp_sys::ggml_type = 12345;
+        assert_eq!(KvCacheType::from(raw), KvCacheType::Unknown(raw));
+        assert_eq!(
+            llama_cpp_sys::ggml_type::from(KvCacheType::Unknown(raw)),
+            raw
+        );
+    }
+
+    #[test]
+    fn context_params_default_matches_llama_cpp_defaults() {
+        let params = LlamaContextParams::default();
+        assert_eq!(params.n_ctx(), std::num::NonZeroU32::new(512));
+        assert_eq!(params.rope_scaling_type(), RopeScalingType::Unspecified);
+    }
+}

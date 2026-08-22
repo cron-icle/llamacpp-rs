@@ -729,3 +729,84 @@ impl LlamaContextParams {
         self.context_params.kv_unified
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::num::NonZeroU32;
+
+    /// Exercises every with_*/getter pair in one pass so each field's builder
+    /// setter and matching read-only accessor are both hit at least once.
+    #[test]
+    fn all_setters_round_trip_through_their_getters() {
+        let params = LlamaContextParams::default()
+            .with_n_ctx(NonZeroU32::new(1024))
+            .with_n_batch(256)
+            .with_n_ubatch(128)
+            .with_n_seq_max(2)
+            .with_n_rs_seq(3)
+            .with_context_type(LlamaContextType::Mtp)
+            .with_n_threads(2)
+            .with_n_threads_batch(3)
+            .with_rope_scaling_type(RopeScalingType::Yarn)
+            .with_pooling_type(LlamaPoolingType::Mean)
+            .with_attention_type(LlamaAttentionType::NonCausal)
+            .with_flash_attention_policy(llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED)
+            .with_rope_freq_base(1.5)
+            .with_rope_freq_scale(0.75)
+            .with_yarn_ext_factor(0.5)
+            .with_yarn_attn_factor(1.2)
+            .with_yarn_beta_fast(20.0)
+            .with_yarn_beta_slow(3.0)
+            .with_yarn_orig_ctx(8192)
+            .with_defrag_thold(0.2)
+            .with_type_k(KvCacheType::Q4_0)
+            .with_type_v(KvCacheType::Q4_1)
+            .with_embeddings(true)
+            .with_offload_kqv(false)
+            .with_no_perf(true)
+            .with_op_offload(false)
+            .with_swa_full(false)
+            .with_kv_unified(true);
+
+        assert_eq!(params.n_ctx(), NonZeroU32::new(1024));
+        assert_eq!(params.n_batch(), 256);
+        assert_eq!(params.n_ubatch(), 128);
+        assert_eq!(params.n_seq_max(), 2);
+        assert_eq!(params.n_rs_seq(), 3);
+        assert_eq!(params.context_type(), LlamaContextType::Mtp);
+        assert_eq!(params.n_threads(), 2);
+        assert_eq!(params.n_threads_batch(), 3);
+        assert_eq!(params.rope_scaling_type(), RopeScalingType::Yarn);
+        assert_eq!(params.pooling_type(), LlamaPoolingType::Mean);
+        assert_eq!(params.attention_type(), LlamaAttentionType::NonCausal);
+        assert_eq!(
+            params.flash_attention_policy(),
+            llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED
+        );
+        assert_eq!(params.rope_freq_base(), 1.5);
+        assert_eq!(params.rope_freq_scale(), 0.75);
+        assert_eq!(params.yarn_ext_factor(), 0.5);
+        assert_eq!(params.yarn_attn_factor(), 1.2);
+        assert_eq!(params.yarn_beta_fast(), 20.0);
+        assert_eq!(params.yarn_beta_slow(), 3.0);
+        assert_eq!(params.yarn_orig_ctx(), 8192);
+        assert_eq!(params.defrag_thold(), 0.2);
+        assert_eq!(params.type_k(), KvCacheType::Q4_0);
+        assert_eq!(params.type_v(), KvCacheType::Q4_1);
+        assert!(params.embeddings());
+        assert!(!params.offload_kqv());
+        assert!(params.no_perf());
+        assert!(!params.op_offload());
+        assert!(!params.swa_full());
+        assert!(params.kv_unified());
+    }
+
+    #[test]
+    fn n_ctx_of_none_resets_to_model_default() {
+        let params = LlamaContextParams::default()
+            .with_n_ctx(NonZeroU32::new(1024))
+            .with_n_ctx(None);
+        assert_eq!(params.n_ctx(), None);
+    }
+}
