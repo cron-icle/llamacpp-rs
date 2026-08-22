@@ -12,7 +12,9 @@ use llamacpp_rs::context::params::LlamaContextParams;
 use llamacpp_rs::context::LlamaContext;
 use llamacpp_rs::llama_batch::LlamaBatch;
 use llamacpp_rs::model::params::LlamaModelParams;
-use llamacpp_rs::mtmd::{MtmdBitmap, MtmdBitmapError, MtmdContext, MtmdContextParams, MtmdInputText};
+use llamacpp_rs::mtmd::{
+    MtmdBitmap, MtmdBitmapError, MtmdContext, MtmdContextParams, MtmdInputText,
+};
 
 use llamacpp_rs::llama_backend::LlamaBackend;
 use llamacpp_rs::model::{LlamaChatMessage, LlamaChatTemplate, LlamaModel, Special};
