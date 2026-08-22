@@ -10,7 +10,12 @@
 #
 # Run a different command (e.g. just the new inference tests) against the
 # same cached image:
-#   docker run --rm llama-cpp-rs-test cargo test -p llama-cpp-rs --features sampler --test inference
+#   docker run --rm llama-cpp-rs-test cargo test -p llama-cpp --features sampler --test inference
+#
+# The default command runs the same gate as CI: fmt check, clippy, and the
+# full test suite (unit + doc + integration tests, including the tiny-model
+# inference/batch/kv-cache/sampling/session tests, and the grammar tests
+# built without the `common` feature).
 ARG UBUNTU_VERSION=22.04
 FROM ubuntu:${UBUNTU_VERSION}
 
@@ -38,4 +43,4 @@ COPY . .
 # incremental cache instead of rebuilding llama.cpp on every invocation.
 RUN cargo build --features sampler
 
-CMD ["cargo", "test", "--features", "sampler"]
+CMD ["./run-tests.sh"]

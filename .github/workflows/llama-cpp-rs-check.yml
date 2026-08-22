@@ -49,6 +49,18 @@ jobs:
         run: cargo test --features sampler
       - name: Dry-Run Publishing
         run: RUST_BACKTRACE=1 cargo publish --workspace --verbose --dry-run
+  standalone-test-suite:
+    name: Standalone test suite (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+      - name: Build test image
+        run: docker build -f test.Dockerfile -t llama-cpp-rs-test .
+      - name: Run standalone test suite
+        run: docker run --rm llama-cpp-rs-test
   arm64:
     name: Check that it builds on various targets
     runs-on: ubuntu-latest
