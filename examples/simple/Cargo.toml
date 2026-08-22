@@ -7,7 +7,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-llamacpp-rs = { path = "../../llama-cpp", version = "0.1.0" }
+llamacpp-rs = { path = "../../llamacpp-rs", version = "0.1.0" }
 hf-hub = { workspace = true }
 clap = { workspace = true, features = ["derive"] }
 anyhow = { workspace = true }

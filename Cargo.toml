@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
   "llama-cpp-sys",
-  "llama-cpp",
+  "llamacpp-rs",
   "examples/embeddings",
   "examples/simple",
   "examples/reranker",

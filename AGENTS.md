@@ -10,7 +10,7 @@ Guidance for coding agents working in this repository.
   `bindgen`. Hand-written glue headers/sources that bridge llama.cpp's C++
   APIs to a flat C surface live under `llama-cpp-sys/ffi/`. Do not hand-edit
   generated bindings.
-- `llama-cpp/` — safe, idiomatic Rust wrapper around the sys crate.
+- `llamacpp-rs/` — safe, idiomatic Rust wrapper around the sys crate.
   Most feature work (model loading, context/KV-cache, batching, sampling,
   grammars, chat templates, mtmd multimodal support) belongs here.
 - `examples/` — runnable examples (`simple`, `embeddings`, `reranker`,

@@ -10,7 +10,7 @@
 #
 # Run a different command (e.g. just the new inference tests) against the
 # same cached image:
-#   docker run --rm llama-cpp-rs-test cargo test -p llama-cpp --features sampler --test inference
+#   docker run --rm llama-cpp-rs-test cargo test -p llamacpp-rs --features sampler --test inference
 #
 # The default command runs the same gate as CI: fmt check, clippy, and the
 # full test suite (unit + doc + integration tests, including the tiny-model

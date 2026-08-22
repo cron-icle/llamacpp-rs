@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-llamacpp-rs = { path = "../../llama-cpp", version = "0.1.0", features = ["mtmd"] }
+llamacpp-rs = { path = "../../llamacpp-rs", version = "0.1.0", features = ["mtmd"] }
 clap = { workspace = true, features = ["derive"] }
 encoding_rs = { workspace = true }
 

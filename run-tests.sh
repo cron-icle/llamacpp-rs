@@ -27,8 +27,8 @@ cargo test --features sampler
 # The grammar-without-common tests are skipped unless LLAMA_TEST_VOCAB_GGUF
 # points at a vocab GGUF file; wire up the one checked into the repo so this
 # path is actually exercised by default.
-echo "==> cargo test -p llama-cpp --no-default-features --features sampler,mtmd --test grammar_without_common"
-LLAMA_TEST_VOCAB_GGUF="$(pwd)/llama-cpp/src/gguf/ggml-vocab-bert-bge.gguf" \
-    cargo test -p llama-cpp --no-default-features --features sampler,mtmd --test grammar_without_common
+echo "==> cargo test -p llamacpp-rs --no-default-features --features sampler,mtmd --test grammar_without_common"
+LLAMA_TEST_VOCAB_GGUF="$(pwd)/llamacpp-rs/src/gguf/ggml-vocab-bert-bge.gguf" \
+    cargo test -p llamacpp-rs --no-default-features --features sampler,mtmd --test grammar_without_common
 
 echo "==> all checks passed"
