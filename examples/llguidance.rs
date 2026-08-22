@@ -6,13 +6,13 @@
 //! cargo run --example llguidance --features llguidance -- <path_to_model>
 //! ```
 
-use llama_cpp_rs::context::params::LlamaContextParams;
-use llama_cpp_rs::llama_backend::LlamaBackend;
-use llama_cpp_rs::llama_batch::LlamaBatch;
-use llama_cpp_rs::model::params::LlamaModelParams;
-use llama_cpp_rs::model::AddBos;
-use llama_cpp_rs::model::LlamaModel;
-use llama_cpp_rs::sampling::LlamaSampler;
+use llama_cpp::context::params::LlamaContextParams;
+use llama_cpp::llama_backend::LlamaBackend;
+use llama_cpp::llama_batch::LlamaBatch;
+use llama_cpp::model::params::LlamaModelParams;
+use llama_cpp::model::AddBos;
+use llama_cpp::model::LlamaModel;
+use llama_cpp::sampling::LlamaSampler;
 use llguidance::api::TopLevelGrammar;
 use llguidance::{Matcher, ParserFactory};
 use std::io::Write;
@@ -54,11 +54,13 @@ fn main() {
 }"#;
 
     // Build an LLGuidance sampler by getting the tok_env for our model (llama-cpp-rs)
-    // and use plain `llguidance` to build the grammar, parser -> matcher -> sampler. 
+    // and use plain `llguidance` to build the grammar, parser -> matcher -> sampler.
     let grammar = TopLevelGrammar::from_tagged_str("json", schema).expect("invalid grammar");
     let tok_env = LlamaSampler::llguidance_tok_env(&model);
     let factory = ParserFactory::new_simple(&tok_env).expect("failed to build parser factory");
-    let parser = factory.create_parser(grammar).expect("failed to create parser");
+    let parser = factory
+        .create_parser(grammar)
+        .expect("failed to create parser");
     let matcher = Matcher::new(Ok(parser));
 
     let llg_sampler = LlamaSampler::from(matcher);

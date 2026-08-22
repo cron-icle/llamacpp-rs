@@ -8,17 +8,15 @@ use std::path::Path;
 use clap::Parser;
 use encoding_rs::UTF_8;
 
-use llama_cpp_rs::context::params::LlamaContextParams;
-use llama_cpp_rs::context::LlamaContext;
-use llama_cpp_rs::llama_batch::LlamaBatch;
-use llama_cpp_rs::model::params::LlamaModelParams;
-use llama_cpp_rs::mtmd::{
-    MtmdBitmap, MtmdBitmapError, MtmdContext, MtmdContextParams, MtmdInputText,
-};
+use llama_cpp::context::params::LlamaContextParams;
+use llama_cpp::context::LlamaContext;
+use llama_cpp::llama_batch::LlamaBatch;
+use llama_cpp::model::params::LlamaModelParams;
+use llama_cpp::mtmd::{MtmdBitmap, MtmdBitmapError, MtmdContext, MtmdContextParams, MtmdInputText};
 
-use llama_cpp_rs::llama_backend::LlamaBackend;
-use llama_cpp_rs::model::{LlamaChatMessage, LlamaChatTemplate, LlamaModel, Special};
-use llama_cpp_rs::sampling::LlamaSampler;
+use llama_cpp::llama_backend::LlamaBackend;
+use llama_cpp::model::{LlamaChatMessage, LlamaChatTemplate, LlamaModel, Special};
+use llama_cpp::sampling::LlamaSampler;
 
 /// Command line parameters for the MTMD CLI application
 #[derive(clap::Parser, Debug)]
@@ -111,7 +109,7 @@ impl<'a> MtmdCliContext<'a> {
                 params
                     .media_marker
                     .as_ref()
-                    .unwrap_or(&llama_cpp_rs::mtmd::mtmd_default_marker().to_string())
+                    .unwrap_or(&llama_cpp::mtmd::mtmd_default_marker().to_string())
                     .clone(),
             )?,
             image_min_tokens: params.image_min_tokens,
@@ -237,7 +235,7 @@ fn run_single_turn(
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Add media marker if not present
     let mut prompt = params.prompt.clone();
-    let default_marker = llama_cpp_rs::mtmd::mtmd_default_marker().to_string();
+    let default_marker = llama_cpp::mtmd::mtmd_default_marker().to_string();
     let media_marker = params.media_marker.as_ref().unwrap_or(&default_marker);
     if !prompt.contains(media_marker) {
         prompt.push_str(media_marker);
