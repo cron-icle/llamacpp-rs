@@ -39,6 +39,11 @@ ENV PATH=/root/.cargo/bin:$PATH
 WORKDIR /workspace
 COPY . .
 
+# The executable bit on run-tests.sh isn't reliably preserved by every git
+# checkout (e.g. Windows clones), so set it explicitly rather than relying
+# on the mode bit committed to the repo.
+RUN chmod +x run-tests.sh
+
 # Compile once at image build time so `docker run` starts from a warm
 # incremental cache instead of rebuilding llama.cpp on every invocation.
 RUN cargo build --features sampler
