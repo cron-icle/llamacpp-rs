@@ -78,6 +78,15 @@ fn greedy_sampling_is_deterministic() {
         a, b,
         "greedy sampling must be deterministic for the same logits"
     );
+    // Not just "the two samplers agree with each other" - assert the actual
+    // returned token id matches the known-correct value for this exact
+    // model/prompt/context, cross-checked against the equivalent generation
+    // in tests/inference.rs::greedy_generation_matches_known_output.
+    assert_eq!(
+        a,
+        LlamaToken(432),
+        "greedy-sampled token id should be exact and reproducible"
+    );
 }
 
 #[test]
@@ -112,8 +121,18 @@ fn penalties_sampler_runs_without_model_state_corruption() {
 
     let token = chain.sample(&ctx, idx);
     assert!(
-        token.0 >= 0,
-        "sampled token id should be a valid vocab index"
+        (0..model.n_vocab()).contains(&token.0),
+        "sampled token id {} should be within the model's vocab range 0..{}",
+        token.0,
+        model.n_vocab()
+    );
+    // dist() is seeded (42), so the full penalties+dist chain is
+    // deterministic for a fixed model/prompt/context; assert the exact
+    // value rather than just "some in-range token came out".
+    assert_eq!(
+        token,
+        LlamaToken(432),
+        "penalties+dist(42) sampled token id should be exact and reproducible"
     );
 }
 
@@ -128,12 +147,28 @@ fn sampler_reset_clears_internal_state() {
         LlamaSampler::penalties(&model, 64, 1.5, 0.0, 0.0),
         LlamaSampler::greedy(),
     ]);
-    let token = sampler.sample(&ctx, idx);
-    sampler.accept(token);
+    let baseline = sampler.sample(&ctx, idx);
+
+    // Accepting a token feeds it into the penalties sampler's repetition
+    // history, which (with a nonzero repeat penalty) changes what it would
+    // sample next for the same logits - so before reset, re-sampling at the
+    // same position must differ from the baseline.
+    sampler.accept(baseline);
+    let after_accept = sampler.sample(&ctx, idx);
+    assert_ne!(
+        after_accept, baseline,
+        "accepting a token should perturb the penalties sampler's repetition state"
+    );
+
+    // reset() must actually clear that accumulated state, not just avoid
+    // panicking: sampling again at the same position should reproduce the
+    // pre-accept baseline exactly.
     sampler.reset();
-    // After reset, sampling should not panic and should still produce a valid token.
     let after_reset = sampler.sample(&ctx, idx);
-    assert!(after_reset.0 >= 0);
+    assert_eq!(
+        after_reset, baseline,
+        "reset() should restore the sampler to its pre-accept behavior"
+    );
 }
 
 #[test]
@@ -149,5 +184,18 @@ fn dry_sampler_runs_end_to_end() {
     ]);
 
     let token = chain.sample(&ctx, idx);
-    assert!(token.0 >= 0);
+    assert!(
+        (0..model.n_vocab()).contains(&token.0),
+        "sampled token id {} should be within the model's vocab range 0..{}",
+        token.0,
+        model.n_vocab()
+    );
+    // With an empty repetition context, DRY has nothing to penalize, so the
+    // chain should reduce to plain greedy sampling - assert the exact
+    // resulting token rather than just "some in-range token came out".
+    assert_eq!(
+        token,
+        LlamaToken(432),
+        "dry+greedy sampled token id should be exact and reproducible"
+    );
 }

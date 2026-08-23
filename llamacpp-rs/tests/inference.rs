@@ -113,6 +113,76 @@ fn generates_tokens_from_prompt() {
     );
 }
 
+/// Regression test for the actual generated content, not just its shape.
+///
+/// Greedy decoding is deterministic: for a fixed model, prompt, and sampler
+/// chain, the exact token ids (and thus decoded text) produced are stable
+/// across runs. The expected values here were captured directly from this
+/// same tiny model/prompt/sampler combination and verified to reproduce
+/// identically across repeated runs before being hard-coded; a change here
+/// means either the tokenizer, decode path, or greedy sampler actually
+/// changed behavior, not just "some tokens came out".
+#[test]
+fn greedy_generation_matches_known_output() {
+    let backend = backend();
+    let model = load_model(backend);
+
+    let ctx_params = LlamaContextParams::default().with_n_ctx(Some(NonZeroU32::new(256).unwrap()));
+    let mut ctx = model
+        .new_context(backend, ctx_params)
+        .expect("unable to create context");
+
+    let tokens = model
+        .str_to_token("Once upon a time", AddBos::Always)
+        .expect("failed to tokenize prompt");
+
+    let mut batch = LlamaBatch::new(64, 1);
+    let last_index = (tokens.len() - 1) as i32;
+    for (i, token) in (0_i32..).zip(tokens.iter().copied()) {
+        batch
+            .add(token, i, &[0], i == last_index)
+            .expect("failed to add token to batch");
+    }
+    ctx.decode(&mut batch).expect("llama_decode failed");
+
+    let mut sampler = LlamaSampler::greedy();
+    let mut decoder = UTF_8.new_decoder();
+    let mut n_cur = batch.n_tokens();
+    let mut generated_ids = Vec::new();
+    let mut generated_text = String::new();
+
+    for _ in 0..10 {
+        let token = sampler.sample(&ctx, batch.n_tokens() - 1);
+        sampler.accept(token);
+        if model.is_eog_token(token) {
+            break;
+        }
+        generated_ids.push(token.0);
+        generated_text.push_str(
+            &model
+                .token_to_piece(token, &mut decoder, true, None)
+                .expect("failed to detokenize sampled token"),
+        );
+
+        batch.clear();
+        batch
+            .add(token, n_cur, &[0], true)
+            .expect("failed to add sampled token to batch");
+        n_cur += 1;
+        ctx.decode(&mut batch).expect("llama_decode failed");
+    }
+
+    assert_eq!(
+        generated_ids,
+        vec![432, 383, 286, 261, 376, 298, 315, 421, 395, 317],
+        "greedy-sampled token ids for a fixed prompt should be exact and reproducible"
+    );
+    assert_eq!(
+        generated_text, ", there was a little girl named Lily",
+        "decoded text for the greedy-sampled tokens should be exact and reproducible"
+    );
+}
+
 /// Clearing the KV cache mid-generation must not error and must allow the
 /// context to accept a fresh sequence starting at position 0 again.
 #[test]
