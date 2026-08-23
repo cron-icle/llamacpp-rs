@@ -31,4 +31,15 @@ echo "==> cargo test -p llamacpp-rs --no-default-features --features sampler,mtm
 LLAMA_TEST_VOCAB_GGUF="$(pwd)/llamacpp-rs/src/gguf/ggml-vocab-bert-bge.gguf" \
     cargo test -p llamacpp-rs --no-default-features --features sampler,mtmd --test grammar_without_common
 
+# End-to-end mtmd (multimodal) pipeline tests against a real vision model.
+# Downloads ~280MB (granite-docling-258M Q8_0 + mmproj) from Hugging Face on
+# first run, cached by hf-hub afterward. Skip with SKIP_MTMD_PIPELINE=1 for
+# fast local iteration or network-constrained environments.
+if [[ "${SKIP_MTMD_PIPELINE:-}" != "1" ]]; then
+    echo "==> cargo test -p llamacpp-rs --features sampler,mtmd --test mtmd_pipeline"
+    cargo test -p llamacpp-rs --features sampler,mtmd --test mtmd_pipeline
+else
+    echo "==> skipping mtmd_pipeline (SKIP_MTMD_PIPELINE=1)"
+fi
+
 echo "==> all checks passed"
