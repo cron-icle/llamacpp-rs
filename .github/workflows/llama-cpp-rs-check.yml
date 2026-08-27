@@ -50,14 +50,20 @@ jobs:
       - name: Dry-Run Publishing
         run: RUST_BACKTRACE=1 cargo publish --workspace --verbose --dry-run
   standalone-test-suite:
-    name: Standalone test suite (Docker)
+    name: Standalone test suite
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           submodules: recursive
-      - name: Build test image
-        run: docker build -f test.Dockerfile -t llama-cpp-rs-test .
+      - name: Install Compile Deps
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run:
+          sudo apt-get update && sudo apt-get install -y build-essential curl libssl-dev libclang-dev pkg-config cmake git
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy,rustfmt
       - name: Run standalone test suite
-        run: docker run --rm llama-cpp-rs-test
+        run: ./run-tests.sh

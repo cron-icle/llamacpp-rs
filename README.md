@@ -85,22 +85,23 @@ KV-cache manipulation, and session/state save-load against a real (tiny)
 GGUF model downloaded from Hugging Face on first run.
 
 Run it directly (requires the llama.cpp submodule checked out and network
-access on first run to fetch the tiny test model):
+access on first run to fetch the tiny test model). This is the same command
+CI runs as a merge gate on every push and pull request to `main` (see below):
 
 ```sh
 ./run-tests.sh              # fmt check + clippy + full test suite
 ./run-tests.sh --tests-only # skip fmt/clippy, just run the tests
 ```
 
-Or run it fully isolated in Docker, without touching your host toolchain:
+On Windows, `run-tests.sh` is a bash script and won't run directly in
+`powershell.exe` — invoke it through Git Bash instead. If plain `bash`
+resolves to `C:\Windows\System32\bash.exe` (the WSL launcher) instead of
+Git Bash, call Git Bash's `bash.exe` by its full path:
 
-```sh
-docker build -f test.Dockerfile -t llama-cpp-rs-test .
-docker run --rm llama-cpp-rs-test
+```powershell
+& "C:\Program Files\Git\bin\bash.exe" run-tests.sh              # fmt check + clippy + full test suite
+& "C:\Program Files\Git\bin\bash.exe" run-tests.sh --tests-only # skip fmt/clippy, just run the tests
 ```
-
-This is the same command CI runs as a merge gate on every push and pull
-request to `main` (see below).
 
 ## Features
 
@@ -113,8 +114,7 @@ default.
 
 `.github/workflows/llama-cpp-rs-check.yml` builds and tests on
 Linux/macOS/Windows/arm64 on every push and pull request to `main`, and
-gates merges on the standalone Docker test suite described above
-(`test.Dockerfile` / `run-tests.sh`).
+gates merges on the standalone test suite described above (`run-tests.sh`).
 `.github/workflows/update-llama-cpp.yml` runs nightly to bump the
 vendored llama.cpp submodule and open a PR.
 
