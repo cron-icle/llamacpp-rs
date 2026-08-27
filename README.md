@@ -64,6 +64,59 @@ Run the multimodal example against an image:
 cargo run --release -p mtmd -- --model <model.gguf> --mmproj <mmproj.gguf> --image <photo.png> --prompt "Describe this image."
 ```
 
+## Usage
+
+Add the crate:
+
+```sh
+cargo add llamacpp-rs
+```
+
+Minimal end-to-end example — load a model, tokenize a prompt, and
+greedily decode a response (see `examples/usage.rs` for the full runnable
+version):
+
+```rust
+use llamacpp_rs::context::params::LlamaContextParams;
+use llamacpp_rs::llama_backend::LlamaBackend;
+use llamacpp_rs::llama_batch::LlamaBatch;
+use llamacpp_rs::model::params::LlamaModelParams;
+use llamacpp_rs::model::{AddBos, LlamaModel};
+use llamacpp_rs::sampling::LlamaSampler;
+
+let backend = LlamaBackend::init()?;
+let model = LlamaModel::load_from_file(&backend, "model.gguf", &LlamaModelParams::default())?;
+let mut ctx = model.new_context(&backend, LlamaContextParams::default())?;
+
+let tokens = model.str_to_token("Hello! How are you?", AddBos::Always)?;
+let mut batch = LlamaBatch::new(512, 1);
+let last = tokens.len() as i32 - 1;
+for (i, token) in (0_i32..).zip(tokens) {
+    batch.add(token, i, &[0], i == last)?;
+}
+ctx.decode(&mut batch)?;
+
+let mut sampler = LlamaSampler::greedy();
+let token = sampler.sample(&ctx, batch.n_tokens() - 1);
+if token != model.token_eos() {
+    let mut decoder = encoding_rs::UTF_8.new_decoder();
+    println!("{}", model.token_to_piece(token, &mut decoder, true, None)?);
+}
+```
+
+From there:
+
+- `run <cmd>` under `examples/simple`, `examples/embeddings`, `examples/mtmd`,
+  and `examples/reranker` are full CLIs covering text generation, embeddings,
+  multimodal (vision) input, and reranking respectively.
+- Enable `--features sampler` for the wider sampler set (top-k, top-p, DRY,
+  penalties, etc.) and `--features cuda`/`metal`/`vulkan`/`rocm`/`opencl` for
+  GPU backends — see [Features](#features) below.
+- Chat templates (`LlamaModel::apply_chat_template`), JSON-schema-constrained
+  grammars (`json_schema_to_grammar`), and session/state save-load are all
+  exposed as safe wrapper methods; see the crate's rustdoc
+  (`cargo doc --open -p llamacpp-rs`) for the full API surface.
+
 ## Hacking
 
 If you've already cloned without `--recursive`, pull in the vendored
