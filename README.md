@@ -49,12 +49,8 @@ consumers.
 
 ## Try it
 
-Clone the repo (with submodules — llama.cpp itself is vendored as one):
-
-```bash
-git clone --recursive <this-repo-url>
-cd llamacpp-rs
-```
+llama.cpp is vendored as a submodule, so make sure it's checked out first
+(see "Hacking" below).
 
 Run the simple example (add `--features cuda` if you have a CUDA GPU):
 
@@ -103,6 +99,40 @@ Git Bash, call Git Bash's `bash.exe` by its full path:
 & "C:\Program Files\Git\bin\bash.exe" run-tests.sh --tests-only # skip fmt/clippy, just run the tests
 ```
 
+### Coverage
+
+What the suite in `llamacpp-rs/tests/` and inline unit tests (`#[cfg(test)]`)
+actually exercises, and what's still untested. Update this list alongside
+any change that adds or removes test coverage.
+
+| Area | Covered? | Where / notes |
+| --- | --- | --- |
+| Model loading — valid model + metadata | ✅ | `model_loading.rs` |
+| Model loading — error cases (missing file, junk bytes, renamed non-GGUF file, truncated header, empty/invalid/NUL-containing paths) | ✅ | `model_loading.rs` |
+| Context params conversions and builder methods | ✅ | unit tests in `context/params.rs`, `context/params/get_set.rs` |
+| Model params conversions and builder methods, incl. KV overrides | ✅ | unit tests in `model/params.rs`, `model/params/kv_overrides.rs` |
+| Token encode/decode, token data, token data array, logit bias, token type | ✅ | unit tests in `token.rs` and submodules |
+| GGUF metadata reading | ✅ | unit tests in `gguf/mod.rs` |
+| Backend init/query | ✅ | unit tests in `llama_backend.rs` |
+| Logging hooks | ✅ | unit tests in `log.rs` |
+| Timing helpers | ✅ | unit tests in `timing.rs` |
+| `json_schema_to_grammar` conversion | ✅ | unit test in `lib.rs` |
+| Batch construction, capacity limits, decoding | ✅ | `batch_kv_session.rs` |
+| KV-cache manipulation: seq copy/remove/shift/keep/clear | ✅ | `batch_kv_session.rs` |
+| Session/state save-load round trip, incl. per-sequence state | ✅ | `batch_kv_session.rs` |
+| Text generation / inference, incl. exact greedy output values | ✅ | `inference.rs` |
+| Sampling: greedy determinism, logit bias, penalties, DRY sampler, sampler reset | ✅ | `sampling.rs` |
+| Grammar-constrained sampling built without the `common` feature, incl. lazy patterns, invalid grammar, grammar-root checks | ✅ | `grammar_without_common.rs` |
+| Chat template rendering, incl. `add_generation_prompt` and missing template-metadata error handling | ✅ | `chat_template.rs` |
+| Embeddings: nonzero pooled output, determinism, distinctness across prompts | ✅ | `embeddings.rs` |
+| mtmd (multimodal) pipeline end-to-end against a real vision model: init, bitmap decoding, tokenize with image chunks, eval, error cases for corrupt/truncated/missing image or mmproj input | ✅ | `mtmd_pipeline.rs` |
+| Speculative decoding | ❌ | `src/speculative.rs` |
+| `llguidance`-backed grammar sampling | ❌ | `src/llguidance_sampler.rs` |
+| LoRA adapter init/set/remove | ❌ | `LlamaLoraAdapter*` in `context.rs`, `model.rs`, `lib.rs` |
+| Encoder/decoder (`encode`) path for encoder-decoder models | ❌ | `EncodeError` in `lib.rs` |
+| GPU backends (CUDA, Metal, Vulkan, ROCm, OpenCL) | ❌ | suite is CPU-only |
+| Multi-sequence / multi-slot batching under concurrent decode | ❌ | — |
+
 ## Features
 
 See each crate's `Cargo.toml` for the full feature list (CUDA, Metal,
@@ -115,8 +145,6 @@ default.
 `.github/workflows/llama-cpp-rs-check.yml` builds and tests on
 Linux/macOS/Windows/arm64 on every push and pull request to `main`, and
 gates merges on the standalone test suite described above (`run-tests.sh`).
-`.github/workflows/update-llama-cpp.yml` runs nightly to bump the
-vendored llama.cpp submodule and open a PR.
 
 Neither crate is published to crates.io yet — a publish workflow can be
 added back when that changes.
