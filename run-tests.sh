@@ -24,6 +24,17 @@ fi
 echo "==> cargo test --features sampler (all workspace tests, incl. doctests)"
 cargo test --features sampler
 
+# Chat-templating (the entry point for chat completion) and embeddings are
+# both user-facing features covered by their own end-to-end test files;
+# `cargo test --features sampler` above already runs them as part of the
+# workspace, called out explicitly here so their coverage is visible in CI
+# output rather than buried in the aggregate run.
+echo "==> cargo test -p llamacpp-rs --features sampler --test chat_template"
+cargo test -p llamacpp-rs --features sampler --test chat_template
+
+echo "==> cargo test -p llamacpp-rs --features sampler --test embeddings"
+cargo test -p llamacpp-rs --features sampler --test embeddings
+
 # The grammar-without-common tests are skipped unless LLAMA_TEST_VOCAB_GGUF
 # points at a vocab GGUF file; wire up the one checked into the repo so this
 # path is actually exercised by default.
