@@ -22,7 +22,9 @@ Invoke-WebRequest -Uri "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF/resolv
 Invoke-WebRequest -Uri "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF/resolve/main/mmproj-F16.gguf" -OutFile "mmproj-F16.gguf"
 ```
 
-To then run the example on CPU, provide an image file `my_image.jpg` and run:
+To then run the example, provide an image file and run — a sample image
+(`assets/turing.png`) is included so you can try it without sourcing your
+own:
 
 **Linux/macOS:**
 
@@ -30,7 +32,7 @@ To then run the example on CPU, provide an image file `my_image.jpg` and run:
 cargo run --release --example mtmd -- \
   --model ./gemma-3-4b-it-Q4_K_M.gguf \
   --mmproj ./mmproj-F16.gguf \
-  --image my_image.jpg \
+  --image assets/turing.png \
   --prompt "What is in the picture?" \
   --no-gpu \
   --no-mmproj-offload \
@@ -43,7 +45,7 @@ cargo run --release --example mtmd -- \
 cargo run --release --example mtmd -- `
   --model ./gemma-3-4b-it-Q4_K_M.gguf `
   --mmproj ./mmproj-F16.gguf `
-  --image my_image.jpg `
+  --image assets/turing.png `
   --prompt "What is in the picture?" `
   --no-gpu `
   --no-mmproj-offload `
