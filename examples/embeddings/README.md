@@ -23,8 +23,16 @@ cargo run --release -p embeddings -- "Hello my name is" hf-model BAAI/bge-small-
 Pass a multi-line prompt to get one embedding per line, and `-n` to
 normalize the output vectors:
 
+**Linux/macOS:**
+
 ```sh
 cargo run --release -p embeddings -- -n "$(printf 'first prompt\nsecond prompt')" local ./bge-small-en-v1.5.Q4_K_M.gguf
+```
+
+**Windows (PowerShell):**
+
+```powershell
+cargo run --release -p embeddings -- -n "first prompt`nsecond prompt" local ./bge-small-en-v1.5.Q4_K_M.gguf
 ```
 
 Expected output: per-token tokenization is echoed to stderr, followed by

@@ -12,12 +12,10 @@ This implementation adds a new pooling type `LLAMA_POOLING_TYPE_RANK` which enab
 
 ## Installation
 
-```bash
-# Follow instructions to clone repo.
-# Navigate to examples reranker
-cd examples/reranker
+Navigate to the example and build it:
 
-# Build the project
+```sh
+cd examples/reranker
 cargo build --release
 ```
 
@@ -25,19 +23,37 @@ cargo build --release
 
 ### Command Line Interface
 
-```bash
-cargo run --release -- \                                                                                                                 ✔ │ 5s │ 12:48:35
-    --model-path "models/bge-reranker-v2-m3.gguf" \ 
+**Linux/macOS:**
+
+```sh
+cargo run --release -- \
+    --model-path "models/bge-reranker-v2-m3.gguf" \
     --query "what is panda?" \
     --documents "hi" \
     --documents "it's a bear" \
     --documents "The giant panda (Ailuropoda melanoleuca), sometimes called a panda bear or simply panda, is a bear species endemic to China." \
     --pooling rank
 ```
-Should output(with bge-reranker-v2-m3-Q5_0): 
+
+**Windows (PowerShell):**
+
+```powershell
+cargo run --release -- `
+    --model-path "models/bge-reranker-v2-m3.gguf" `
+    --query "what is panda?" `
+    --documents "hi" `
+    --documents "it's a bear" `
+    --documents "The giant panda (Ailuropoda melanoleuca), sometimes called a panda bear or simply panda, is a bear species endemic to China." `
+    --pooling rank
+```
+
+Should output (with bge-reranker-v2-m3-Q5_0):
+
+```
 rerank score 0:   -6.551
 rerank score 1:   -3.802
 rerank score 2:    4.522
+```
 
 ### CLI Arguments
 
@@ -48,14 +64,13 @@ rerank score 2:    4.522
 
 ### Pooling Types
 
-- `rank`: Performs cross-encoder reranking 
-
+- `rank`: Performs cross-encoder reranking
 
 Note: The raw scores are not normalized through a sigmoid function. If you need scores between 0-1, you'll need to implement sigmoid normalization in your application code.
 
 # Additional notes
 
-- Query and documents are concatenated using the format <bos>query</eos><sep>answer</eos> 
+- Query and documents are concatenated using the format <bos>query</eos><sep>answer</eos>
 
 ## Supported Models
 
@@ -64,7 +79,7 @@ Some tested models:
 - [BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3)
 - [jinaai/jina-reranker-v1-tiny-en](https://huggingface.co/jinaai/jina-reranker-v1-tiny-en)
 
-Not tested others, but anything supported by llama.cpp should work. 
+Not tested others, but anything supported by llama.cpp should work.
 
 ## Implementation Details
 
