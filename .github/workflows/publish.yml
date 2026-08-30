@@ -36,6 +36,40 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache cargo registry and build artifacts
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          # llama.cpp's cmake build lives under target/ keyed by build.rs +
+          # the pinned submodule commit; the vendored source itself doesn't
+          # change between runs of this workflow unless the submodule moves.
+          key: ${{ runner.os }}-publish-cargo-${{ hashFiles('Cargo.lock', 'llamacpp-rs/build.rs') }}-${{ hashFiles('.gitmodules') }}
+          restore-keys: |
+            ${{ runner.os }}-publish-cargo-
+
+      # Only a tag push skips the interactive dry-run gate above, so give it
+      # its own safety net: the tag doesn't by itself prove the commit it
+      # points at has passed the check workflow (e.g. a tag pushed from a
+      # branch other than main), and a version mismatch between the tag and
+      # Cargo.toml would otherwise publish silently under the wrong number.
+      - name: Verify tag matches crate version
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          tag_version="${GITHUB_REF_NAME#v}"
+          crate_version="$(cargo metadata --no-deps --format-version 1 | \
+            jq -r '.packages[] | select(.name == "llamacpp-rs") | .version')"
+          if [ "$tag_version" != "$crate_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match llamacpp-rs version $crate_version in Cargo.toml"
+            exit 1
+          fi
+
+      - name: Test
+        if: ${{ github.event_name == 'push' }}
+        run: cargo test -p llamacpp-rs --features sampler
+
       - name: Publish (dry run)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         run: cargo publish -p llamacpp-rs --dry-run --verbose
