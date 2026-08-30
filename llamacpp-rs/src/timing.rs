@@ -4,7 +4,7 @@ use std::fmt::{Debug, Display, Formatter};
 /// A wrapper around `llama_timings`.
 #[derive(Clone, Copy, Debug)]
 pub struct LlamaTimings {
-    pub(crate) timings: llama_cpp_sys::llama_perf_context_data,
+    pub(crate) timings: crate::llama_cpp_sys::llama_perf_context_data,
 }
 
 impl LlamaTimings {
@@ -29,7 +29,7 @@ impl LlamaTimings {
         n_reused: i32,
     ) -> Self {
         Self {
-            timings: llama_cpp_sys::llama_perf_context_data {
+            timings: crate::llama_cpp_sys::llama_perf_context_data {
                 t_start_ms,
                 t_load_ms,
                 t_p_eval_ms,

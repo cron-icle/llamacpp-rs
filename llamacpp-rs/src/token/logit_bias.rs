@@ -12,7 +12,7 @@ use crate::token::LlamaToken;
 #[repr(transparent)]
 #[allow(clippy::module_name_repetitions)]
 pub struct LlamaLogitBias {
-    logit_bias: llama_cpp_sys::llama_logit_bias,
+    logit_bias: crate::llama_cpp_sys::llama_logit_bias,
 }
 
 impl LlamaLogitBias {
@@ -27,7 +27,7 @@ impl LlamaLogitBias {
     #[must_use]
     pub fn new(LlamaToken(token): LlamaToken, bias: f32) -> Self {
         Self {
-            logit_bias: llama_cpp_sys::llama_logit_bias { token, bias },
+            logit_bias: crate::llama_cpp_sys::llama_logit_bias { token, bias },
         }
     }
 

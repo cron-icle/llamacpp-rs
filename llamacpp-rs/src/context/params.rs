@@ -130,24 +130,24 @@ pub enum LlamaContextType {
     /// Multi-token-prediction draft context.
     Mtp,
     /// Unknown context type from a newer llama.cpp.
-    Unknown(llama_cpp_sys::llama_context_type),
+    Unknown(crate::llama_cpp_sys::llama_context_type),
 }
 
-impl From<llama_cpp_sys::llama_context_type> for LlamaContextType {
-    fn from(value: llama_cpp_sys::llama_context_type) -> Self {
+impl From<crate::llama_cpp_sys::llama_context_type> for LlamaContextType {
+    fn from(value: crate::llama_cpp_sys::llama_context_type) -> Self {
         match value {
-            x if x == llama_cpp_sys::LLAMA_CONTEXT_TYPE_DEFAULT => Self::Default,
-            x if x == llama_cpp_sys::LLAMA_CONTEXT_TYPE_MTP => Self::Mtp,
+            x if x == crate::llama_cpp_sys::LLAMA_CONTEXT_TYPE_DEFAULT => Self::Default,
+            x if x == crate::llama_cpp_sys::LLAMA_CONTEXT_TYPE_MTP => Self::Mtp,
             x => Self::Unknown(x),
         }
     }
 }
 
-impl From<LlamaContextType> for llama_cpp_sys::llama_context_type {
+impl From<LlamaContextType> for crate::llama_cpp_sys::llama_context_type {
     fn from(value: LlamaContextType) -> Self {
         match value {
-            LlamaContextType::Default => llama_cpp_sys::LLAMA_CONTEXT_TYPE_DEFAULT,
-            LlamaContextType::Mtp => llama_cpp_sys::LLAMA_CONTEXT_TYPE_MTP,
+            LlamaContextType::Default => crate::llama_cpp_sys::LLAMA_CONTEXT_TYPE_DEFAULT,
+            LlamaContextType::Mtp => crate::llama_cpp_sys::LLAMA_CONTEXT_TYPE_MTP,
             LlamaContextType::Unknown(raw) => raw,
         }
     }
@@ -162,7 +162,7 @@ pub enum KvCacheType {
     /// the runtime will operate with that type).
     /// This variant preserves API compatibility when new `ggml_type` values are
     /// introduced in the future.
-    Unknown(llama_cpp_sys::ggml_type),
+    Unknown(crate::llama_cpp_sys::ggml_type),
     F32,
     F16,
     Q4_0,
@@ -197,81 +197,81 @@ pub enum KvCacheType {
     MXFP4,
 }
 
-impl From<KvCacheType> for llama_cpp_sys::ggml_type {
+impl From<KvCacheType> for crate::llama_cpp_sys::ggml_type {
     fn from(value: KvCacheType) -> Self {
         match value {
             KvCacheType::Unknown(raw) => raw,
-            KvCacheType::F32 => llama_cpp_sys::GGML_TYPE_F32,
-            KvCacheType::F16 => llama_cpp_sys::GGML_TYPE_F16,
-            KvCacheType::Q4_0 => llama_cpp_sys::GGML_TYPE_Q4_0,
-            KvCacheType::Q4_1 => llama_cpp_sys::GGML_TYPE_Q4_1,
-            KvCacheType::Q5_0 => llama_cpp_sys::GGML_TYPE_Q5_0,
-            KvCacheType::Q5_1 => llama_cpp_sys::GGML_TYPE_Q5_1,
-            KvCacheType::Q8_0 => llama_cpp_sys::GGML_TYPE_Q8_0,
-            KvCacheType::Q8_1 => llama_cpp_sys::GGML_TYPE_Q8_1,
-            KvCacheType::Q2_K => llama_cpp_sys::GGML_TYPE_Q2_K,
-            KvCacheType::Q3_K => llama_cpp_sys::GGML_TYPE_Q3_K,
-            KvCacheType::Q4_K => llama_cpp_sys::GGML_TYPE_Q4_K,
-            KvCacheType::Q5_K => llama_cpp_sys::GGML_TYPE_Q5_K,
-            KvCacheType::Q6_K => llama_cpp_sys::GGML_TYPE_Q6_K,
-            KvCacheType::Q8_K => llama_cpp_sys::GGML_TYPE_Q8_K,
-            KvCacheType::IQ2_XXS => llama_cpp_sys::GGML_TYPE_IQ2_XXS,
-            KvCacheType::IQ2_XS => llama_cpp_sys::GGML_TYPE_IQ2_XS,
-            KvCacheType::IQ3_XXS => llama_cpp_sys::GGML_TYPE_IQ3_XXS,
-            KvCacheType::IQ1_S => llama_cpp_sys::GGML_TYPE_IQ1_S,
-            KvCacheType::IQ4_NL => llama_cpp_sys::GGML_TYPE_IQ4_NL,
-            KvCacheType::IQ3_S => llama_cpp_sys::GGML_TYPE_IQ3_S,
-            KvCacheType::IQ2_S => llama_cpp_sys::GGML_TYPE_IQ2_S,
-            KvCacheType::IQ4_XS => llama_cpp_sys::GGML_TYPE_IQ4_XS,
-            KvCacheType::I8 => llama_cpp_sys::GGML_TYPE_I8,
-            KvCacheType::I16 => llama_cpp_sys::GGML_TYPE_I16,
-            KvCacheType::I32 => llama_cpp_sys::GGML_TYPE_I32,
-            KvCacheType::I64 => llama_cpp_sys::GGML_TYPE_I64,
-            KvCacheType::F64 => llama_cpp_sys::GGML_TYPE_F64,
-            KvCacheType::IQ1_M => llama_cpp_sys::GGML_TYPE_IQ1_M,
-            KvCacheType::BF16 => llama_cpp_sys::GGML_TYPE_BF16,
-            KvCacheType::TQ1_0 => llama_cpp_sys::GGML_TYPE_TQ1_0,
-            KvCacheType::TQ2_0 => llama_cpp_sys::GGML_TYPE_TQ2_0,
-            KvCacheType::MXFP4 => llama_cpp_sys::GGML_TYPE_MXFP4,
+            KvCacheType::F32 => crate::llama_cpp_sys::GGML_TYPE_F32,
+            KvCacheType::F16 => crate::llama_cpp_sys::GGML_TYPE_F16,
+            KvCacheType::Q4_0 => crate::llama_cpp_sys::GGML_TYPE_Q4_0,
+            KvCacheType::Q4_1 => crate::llama_cpp_sys::GGML_TYPE_Q4_1,
+            KvCacheType::Q5_0 => crate::llama_cpp_sys::GGML_TYPE_Q5_0,
+            KvCacheType::Q5_1 => crate::llama_cpp_sys::GGML_TYPE_Q5_1,
+            KvCacheType::Q8_0 => crate::llama_cpp_sys::GGML_TYPE_Q8_0,
+            KvCacheType::Q8_1 => crate::llama_cpp_sys::GGML_TYPE_Q8_1,
+            KvCacheType::Q2_K => crate::llama_cpp_sys::GGML_TYPE_Q2_K,
+            KvCacheType::Q3_K => crate::llama_cpp_sys::GGML_TYPE_Q3_K,
+            KvCacheType::Q4_K => crate::llama_cpp_sys::GGML_TYPE_Q4_K,
+            KvCacheType::Q5_K => crate::llama_cpp_sys::GGML_TYPE_Q5_K,
+            KvCacheType::Q6_K => crate::llama_cpp_sys::GGML_TYPE_Q6_K,
+            KvCacheType::Q8_K => crate::llama_cpp_sys::GGML_TYPE_Q8_K,
+            KvCacheType::IQ2_XXS => crate::llama_cpp_sys::GGML_TYPE_IQ2_XXS,
+            KvCacheType::IQ2_XS => crate::llama_cpp_sys::GGML_TYPE_IQ2_XS,
+            KvCacheType::IQ3_XXS => crate::llama_cpp_sys::GGML_TYPE_IQ3_XXS,
+            KvCacheType::IQ1_S => crate::llama_cpp_sys::GGML_TYPE_IQ1_S,
+            KvCacheType::IQ4_NL => crate::llama_cpp_sys::GGML_TYPE_IQ4_NL,
+            KvCacheType::IQ3_S => crate::llama_cpp_sys::GGML_TYPE_IQ3_S,
+            KvCacheType::IQ2_S => crate::llama_cpp_sys::GGML_TYPE_IQ2_S,
+            KvCacheType::IQ4_XS => crate::llama_cpp_sys::GGML_TYPE_IQ4_XS,
+            KvCacheType::I8 => crate::llama_cpp_sys::GGML_TYPE_I8,
+            KvCacheType::I16 => crate::llama_cpp_sys::GGML_TYPE_I16,
+            KvCacheType::I32 => crate::llama_cpp_sys::GGML_TYPE_I32,
+            KvCacheType::I64 => crate::llama_cpp_sys::GGML_TYPE_I64,
+            KvCacheType::F64 => crate::llama_cpp_sys::GGML_TYPE_F64,
+            KvCacheType::IQ1_M => crate::llama_cpp_sys::GGML_TYPE_IQ1_M,
+            KvCacheType::BF16 => crate::llama_cpp_sys::GGML_TYPE_BF16,
+            KvCacheType::TQ1_0 => crate::llama_cpp_sys::GGML_TYPE_TQ1_0,
+            KvCacheType::TQ2_0 => crate::llama_cpp_sys::GGML_TYPE_TQ2_0,
+            KvCacheType::MXFP4 => crate::llama_cpp_sys::GGML_TYPE_MXFP4,
         }
     }
 }
 
-impl From<llama_cpp_sys::ggml_type> for KvCacheType {
-    fn from(value: llama_cpp_sys::ggml_type) -> Self {
+impl From<crate::llama_cpp_sys::ggml_type> for KvCacheType {
+    fn from(value: crate::llama_cpp_sys::ggml_type) -> Self {
         match value {
-            x if x == llama_cpp_sys::GGML_TYPE_F32 => KvCacheType::F32,
-            x if x == llama_cpp_sys::GGML_TYPE_F16 => KvCacheType::F16,
-            x if x == llama_cpp_sys::GGML_TYPE_Q4_0 => KvCacheType::Q4_0,
-            x if x == llama_cpp_sys::GGML_TYPE_Q4_1 => KvCacheType::Q4_1,
-            x if x == llama_cpp_sys::GGML_TYPE_Q5_0 => KvCacheType::Q5_0,
-            x if x == llama_cpp_sys::GGML_TYPE_Q5_1 => KvCacheType::Q5_1,
-            x if x == llama_cpp_sys::GGML_TYPE_Q8_0 => KvCacheType::Q8_0,
-            x if x == llama_cpp_sys::GGML_TYPE_Q8_1 => KvCacheType::Q8_1,
-            x if x == llama_cpp_sys::GGML_TYPE_Q2_K => KvCacheType::Q2_K,
-            x if x == llama_cpp_sys::GGML_TYPE_Q3_K => KvCacheType::Q3_K,
-            x if x == llama_cpp_sys::GGML_TYPE_Q4_K => KvCacheType::Q4_K,
-            x if x == llama_cpp_sys::GGML_TYPE_Q5_K => KvCacheType::Q5_K,
-            x if x == llama_cpp_sys::GGML_TYPE_Q6_K => KvCacheType::Q6_K,
-            x if x == llama_cpp_sys::GGML_TYPE_Q8_K => KvCacheType::Q8_K,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ2_XXS => KvCacheType::IQ2_XXS,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ2_XS => KvCacheType::IQ2_XS,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ3_XXS => KvCacheType::IQ3_XXS,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ1_S => KvCacheType::IQ1_S,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ4_NL => KvCacheType::IQ4_NL,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ3_S => KvCacheType::IQ3_S,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ2_S => KvCacheType::IQ2_S,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ4_XS => KvCacheType::IQ4_XS,
-            x if x == llama_cpp_sys::GGML_TYPE_I8 => KvCacheType::I8,
-            x if x == llama_cpp_sys::GGML_TYPE_I16 => KvCacheType::I16,
-            x if x == llama_cpp_sys::GGML_TYPE_I32 => KvCacheType::I32,
-            x if x == llama_cpp_sys::GGML_TYPE_I64 => KvCacheType::I64,
-            x if x == llama_cpp_sys::GGML_TYPE_F64 => KvCacheType::F64,
-            x if x == llama_cpp_sys::GGML_TYPE_IQ1_M => KvCacheType::IQ1_M,
-            x if x == llama_cpp_sys::GGML_TYPE_BF16 => KvCacheType::BF16,
-            x if x == llama_cpp_sys::GGML_TYPE_TQ1_0 => KvCacheType::TQ1_0,
-            x if x == llama_cpp_sys::GGML_TYPE_TQ2_0 => KvCacheType::TQ2_0,
-            x if x == llama_cpp_sys::GGML_TYPE_MXFP4 => KvCacheType::MXFP4,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_F32 => KvCacheType::F32,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_F16 => KvCacheType::F16,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q4_0 => KvCacheType::Q4_0,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q4_1 => KvCacheType::Q4_1,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q5_0 => KvCacheType::Q5_0,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q5_1 => KvCacheType::Q5_1,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q8_0 => KvCacheType::Q8_0,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q8_1 => KvCacheType::Q8_1,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q2_K => KvCacheType::Q2_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q3_K => KvCacheType::Q3_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q4_K => KvCacheType::Q4_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q5_K => KvCacheType::Q5_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q6_K => KvCacheType::Q6_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_Q8_K => KvCacheType::Q8_K,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ2_XXS => KvCacheType::IQ2_XXS,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ2_XS => KvCacheType::IQ2_XS,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ3_XXS => KvCacheType::IQ3_XXS,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ1_S => KvCacheType::IQ1_S,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ4_NL => KvCacheType::IQ4_NL,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ3_S => KvCacheType::IQ3_S,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ2_S => KvCacheType::IQ2_S,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ4_XS => KvCacheType::IQ4_XS,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_I8 => KvCacheType::I8,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_I16 => KvCacheType::I16,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_I32 => KvCacheType::I32,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_I64 => KvCacheType::I64,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_F64 => KvCacheType::F64,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_IQ1_M => KvCacheType::IQ1_M,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_BF16 => KvCacheType::BF16,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_TQ1_0 => KvCacheType::TQ1_0,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_TQ2_0 => KvCacheType::TQ2_0,
+            x if x == crate::llama_cpp_sys::GGML_TYPE_MXFP4 => KvCacheType::MXFP4,
             _ => KvCacheType::Unknown(value),
         }
     }
@@ -299,7 +299,7 @@ impl From<llama_cpp_sys::ggml_type> for KvCacheType {
     clippy::module_name_repetitions
 )]
 pub struct LlamaContextParams {
-    pub(crate) context_params: llama_cpp_sys::llama_context_params,
+    pub(crate) context_params: crate::llama_cpp_sys::llama_context_params,
 }
 
 /// SAFETY: we do not currently allow setting or reading the pointers that cause this to not be automatically send or sync.
@@ -316,7 +316,7 @@ unsafe impl Sync for LlamaContextParams {}
 /// ```
 impl Default for LlamaContextParams {
     fn default() -> Self {
-        let context_params = unsafe { llama_cpp_sys::llama_context_default_params() };
+        let context_params = unsafe { crate::llama_cpp_sys::llama_context_default_params() };
         Self { context_params }
     }
 }
@@ -386,17 +386,17 @@ mod tests {
     #[test]
     fn context_type_round_trips_known_variants() {
         for variant in [LlamaContextType::Default, LlamaContextType::Mtp] {
-            let raw = llama_cpp_sys::llama_context_type::from(variant);
+            let raw = crate::llama_cpp_sys::llama_context_type::from(variant);
             assert_eq!(LlamaContextType::from(raw), variant);
         }
     }
 
     #[test]
     fn context_type_unknown_value_round_trips_as_unknown() {
-        let raw: llama_cpp_sys::llama_context_type = 999;
+        let raw: crate::llama_cpp_sys::llama_context_type = 999;
         assert_eq!(LlamaContextType::from(raw), LlamaContextType::Unknown(raw));
         assert_eq!(
-            llama_cpp_sys::llama_context_type::from(LlamaContextType::Unknown(raw)),
+            crate::llama_cpp_sys::llama_context_type::from(LlamaContextType::Unknown(raw)),
             raw
         );
     }
@@ -438,17 +438,17 @@ mod tests {
             KvCacheType::MXFP4,
         ];
         for variant in variants {
-            let raw = llama_cpp_sys::ggml_type::from(variant);
+            let raw = crate::llama_cpp_sys::ggml_type::from(variant);
             assert_eq!(KvCacheType::from(raw), variant);
         }
     }
 
     #[test]
     fn kv_cache_type_unknown_value_round_trips_as_unknown() {
-        let raw: llama_cpp_sys::ggml_type = 12345;
+        let raw: crate::llama_cpp_sys::ggml_type = 12345;
         assert_eq!(KvCacheType::from(raw), KvCacheType::Unknown(raw));
         assert_eq!(
-            llama_cpp_sys::ggml_type::from(KvCacheType::Unknown(raw)),
+            crate::llama_cpp_sys::ggml_type::from(KvCacheType::Unknown(raw)),
             raw
         );
     }

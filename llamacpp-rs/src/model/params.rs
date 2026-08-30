@@ -32,16 +32,16 @@ pub enum FitError {
 
 #[allow(clippy::cast_possible_wrap)]
 #[allow(clippy::cast_possible_truncation)]
-const LLAMA_SPLIT_MODE_NONE: i8 = llama_cpp_sys::LLAMA_SPLIT_MODE_NONE as i8;
+const LLAMA_SPLIT_MODE_NONE: i8 = crate::llama_cpp_sys::LLAMA_SPLIT_MODE_NONE as i8;
 #[allow(clippy::cast_possible_wrap)]
 #[allow(clippy::cast_possible_truncation)]
-const LLAMA_SPLIT_MODE_LAYER: i8 = llama_cpp_sys::LLAMA_SPLIT_MODE_LAYER as i8;
+const LLAMA_SPLIT_MODE_LAYER: i8 = crate::llama_cpp_sys::LLAMA_SPLIT_MODE_LAYER as i8;
 #[allow(clippy::cast_possible_wrap)]
 #[allow(clippy::cast_possible_truncation)]
-const LLAMA_SPLIT_MODE_ROW: i8 = llama_cpp_sys::LLAMA_SPLIT_MODE_ROW as i8;
+const LLAMA_SPLIT_MODE_ROW: i8 = crate::llama_cpp_sys::LLAMA_SPLIT_MODE_ROW as i8;
 #[allow(clippy::cast_possible_wrap)]
 #[allow(clippy::cast_possible_truncation)]
-const LLAMA_SPLIT_MODE_TENSOR: i8 = llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as i8;
+const LLAMA_SPLIT_MODE_TENSOR: i8 = crate::llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as i8;
 
 /// A rusty wrapper around `llama_split_mode`.
 #[repr(i8)]
@@ -144,22 +144,22 @@ pub const LLAMA_CPP_MAX_DEVICES: usize = 16;
 
 /// Combines the two independent `use_mmap`/`use_mlock` flags this crate's public
 /// API exposes into the single `load_mode` enum llama.cpp now stores them as.
-fn load_mode_from_flags(use_mmap: bool, use_mlock: bool) -> llama_cpp_sys::llama_load_mode {
+fn load_mode_from_flags(use_mmap: bool, use_mlock: bool) -> crate::llama_cpp_sys::llama_load_mode {
     match (use_mmap, use_mlock) {
-        (false, false) => llama_cpp_sys::LLAMA_LOAD_MODE_NONE,
-        (true, false) => llama_cpp_sys::LLAMA_LOAD_MODE_MMAP,
-        (false, true) => llama_cpp_sys::LLAMA_LOAD_MODE_MLOCK,
-        (true, true) => llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK,
+        (false, false) => crate::llama_cpp_sys::LLAMA_LOAD_MODE_NONE,
+        (true, false) => crate::llama_cpp_sys::LLAMA_LOAD_MODE_MMAP,
+        (false, true) => crate::llama_cpp_sys::LLAMA_LOAD_MODE_MLOCK,
+        (true, true) => crate::llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK,
     }
 }
 
 /// A safe wrapper around `llama_model_params`.
 #[allow(clippy::module_name_repetitions)]
 pub struct LlamaModelParams {
-    pub(crate) params: llama_cpp_sys::llama_model_params,
-    kv_overrides: Vec<llama_cpp_sys::llama_model_kv_override>,
-    buft_overrides: Vec<llama_cpp_sys::llama_model_tensor_buft_override>,
-    devices: Pin<Box<[llama_cpp_sys::ggml_backend_dev_t; LLAMA_CPP_MAX_DEVICES]>>,
+    pub(crate) params: crate::llama_cpp_sys::llama_model_params,
+    kv_overrides: Vec<crate::llama_cpp_sys::llama_model_kv_override>,
+    buft_overrides: Vec<crate::llama_cpp_sys::llama_model_tensor_buft_override>,
+    devices: Pin<Box<[crate::llama_cpp_sys::ggml_backend_dev_t; LLAMA_CPP_MAX_DEVICES]>>,
     tensor_split: Vec<f32>,
     progress_callback: Option<Box<dyn FnMut(f32) -> bool>>,
 }
@@ -243,10 +243,10 @@ impl LlamaModelParams {
 
         // push the next one to ensure we maintain the iterator invariant of ending with a 0
         self.kv_overrides
-            .push(llama_cpp_sys::llama_model_kv_override {
+            .push(crate::llama_cpp_sys::llama_model_kv_override {
                 key: [0; 128],
                 tag: 0,
-                __bindgen_anon_1: llama_cpp_sys::llama_model_kv_override__bindgen_ty_1 {
+                __bindgen_anon_1: crate::llama_cpp_sys::llama_model_kv_override__bindgen_ty_1 {
                     val_i64: 0,
                 },
             });
@@ -283,14 +283,14 @@ impl LlamaModelParams {
         }
 
         buft_override.pattern = key.as_ptr();
-        buft_override.buft = unsafe { llama_cpp_sys::ggml_backend_cpu_buffer_type() };
+        buft_override.buft = unsafe { crate::llama_cpp_sys::ggml_backend_cpu_buffer_type() };
 
         // set to null pointer for panic safety (as push may move the vector, invalidating the pointer)
         self.params.tensor_buft_overrides = null();
 
         // push the next one to ensure we maintain the iterator invariant of ending with a 0
         self.buft_overrides
-            .push(llama_cpp_sys::llama_model_tensor_buft_override {
+            .push(crate::llama_cpp_sys::llama_model_tensor_buft_override {
                 pattern: std::ptr::null(),
                 buft: std::ptr::null_mut(),
             });
@@ -374,10 +374,10 @@ impl LlamaModelParams {
         cparams: &mut LlamaContextParams,
         margins: &mut [usize],
         n_ctx_min: u32,
-        log_level: llama_cpp_sys::ggml_log_level,
+        log_level: crate::llama_cpp_sys::ggml_log_level,
     ) -> Result<FitResult, FitError> {
-        let max_devices = unsafe { llama_cpp_sys::llama_max_devices() };
-        let max_buft = unsafe { llama_cpp_sys::llama_max_tensor_buft_overrides() };
+        let max_devices = unsafe { crate::llama_cpp_sys::llama_max_devices() };
+        let max_buft = unsafe { crate::llama_cpp_sys::llama_max_tensor_buft_overrides() };
 
         // Allocate tensor_split output buffer.
         self.tensor_split.clear();
@@ -387,7 +387,7 @@ impl LlamaModelParams {
         self.buft_overrides.clear();
         self.buft_overrides.resize(
             max_buft + 1,
-            llama_cpp_sys::llama_model_tensor_buft_override {
+            crate::llama_cpp_sys::llama_model_tensor_buft_override {
                 pattern: std::ptr::null(),
                 buft: std::ptr::null_mut(),
             },
@@ -398,7 +398,7 @@ impl LlamaModelParams {
         self.params.tensor_buft_overrides = null();
 
         let status = unsafe {
-            llama_cpp_sys::llama_rs_fit_params(
+            crate::llama_cpp_sys::llama_rs_fit_params(
                 model_path.as_ptr(),
                 &raw mut self.params,
                 &raw mut cparams.context_params,
@@ -456,7 +456,8 @@ impl LlamaModelParams {
     pub fn use_mmap(&self) -> bool {
         matches!(
             self.params.load_mode,
-            llama_cpp_sys::LLAMA_LOAD_MODE_MMAP | llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK
+            crate::llama_cpp_sys::LLAMA_LOAD_MODE_MMAP
+                | crate::llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK
         )
     }
 
@@ -465,7 +466,8 @@ impl LlamaModelParams {
     pub fn use_mlock(&self) -> bool {
         matches!(
             self.params.load_mode,
-            llama_cpp_sys::LLAMA_LOAD_MODE_MLOCK | llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK
+            crate::llama_cpp_sys::LLAMA_LOAD_MODE_MLOCK
+                | crate::llama_cpp_sys::LLAMA_LOAD_MODE_MMAP_MLOCK
         )
     }
 
@@ -481,8 +483,8 @@ impl LlamaModelParams {
     #[must_use]
     pub fn devices(&self) -> Vec<usize> {
         let mut backend_devices = Vec::new();
-        for i in 0..unsafe { llama_cpp_sys::ggml_backend_dev_count() } {
-            let dev = unsafe { llama_cpp_sys::ggml_backend_dev_get(i) };
+        for i in 0..unsafe { crate::llama_cpp_sys::ggml_backend_dev_count() } {
+            let dev = unsafe { crate::llama_cpp_sys::ggml_backend_dev_get(i) };
             backend_devices.push(dev);
         }
         let mut devices = Vec::new();
@@ -574,10 +576,10 @@ impl LlamaModelParams {
             return Err(LlamaCppError::MaxDevicesExceeded(max_devices));
         }
         for (i, &dev) in devices.iter().enumerate() {
-            if dev >= unsafe { llama_cpp_sys::ggml_backend_dev_count() } {
+            if dev >= unsafe { crate::llama_cpp_sys::ggml_backend_dev_count() } {
                 return Err(LlamaCppError::BackendDeviceNotFound(dev));
             }
-            let backend_dev = unsafe { llama_cpp_sys::ggml_backend_dev_get(dev) };
+            let backend_dev = unsafe { crate::llama_cpp_sys::ggml_backend_dev_get(dev) };
             self.devices[i] = backend_dev;
         }
         if self.devices.is_empty() {
@@ -647,18 +649,18 @@ impl LlamaModelParams {
 /// ```
 impl Default for LlamaModelParams {
     fn default() -> Self {
-        let default_params = unsafe { llama_cpp_sys::llama_model_default_params() };
+        let default_params = unsafe { crate::llama_cpp_sys::llama_model_default_params() };
         LlamaModelParams {
             params: default_params,
             // push the next one to ensure we maintain the iterator invariant of ending with a 0
-            kv_overrides: vec![llama_cpp_sys::llama_model_kv_override {
+            kv_overrides: vec![crate::llama_cpp_sys::llama_model_kv_override {
                 key: [0; 128],
                 tag: 0,
-                __bindgen_anon_1: llama_cpp_sys::llama_model_kv_override__bindgen_ty_1 {
+                __bindgen_anon_1: crate::llama_cpp_sys::llama_model_kv_override__bindgen_ty_1 {
                     val_i64: 0,
                 },
             }],
-            buft_overrides: vec![llama_cpp_sys::llama_model_tensor_buft_override {
+            buft_overrides: vec![crate::llama_cpp_sys::llama_model_tensor_buft_override {
                 pattern: std::ptr::null(),
                 buft: std::ptr::null_mut(),
             }],
@@ -713,16 +715,16 @@ mod tests {
     #[test]
     fn tensor_split_mode_round_trips() {
         assert_eq!(
-            LlamaSplitMode::try_from(llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR),
+            LlamaSplitMode::try_from(crate::llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR),
             Ok(LlamaSplitMode::Tensor)
         );
         assert_eq!(
             u32::from(LlamaSplitMode::Tensor),
-            llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as u32
+            crate::llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as u32
         );
         assert_eq!(
             i32::from(LlamaSplitMode::Tensor),
-            llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as i32
+            crate::llama_cpp_sys::LLAMA_SPLIT_MODE_TENSOR as i32
         );
     }
 

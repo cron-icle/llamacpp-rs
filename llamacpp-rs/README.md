@@ -10,8 +10,9 @@ top of it.
 
 ## Dependencies
 
-This uses `bindgen` (via `llama-cpp-sys`) to build the bindings to
-llama.cpp, so `clang` needs to be installed on your system. See
+This uses `bindgen` (in `build.rs`, against the vendored llama.cpp submodule
+and the glue in `ffi/`) to build the raw bindings, so `clang` needs to be
+installed on your system. See
 [bindgen's requirements](https://rust-lang.github.io/rust-bindgen/requirements.html)
 for details.
 

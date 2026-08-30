@@ -27,6 +27,7 @@ pub mod context;
 pub mod gguf;
 pub mod llama_backend;
 pub mod llama_batch;
+mod llama_cpp_sys;
 #[cfg(feature = "llguidance")]
 pub(crate) mod llguidance_sampler;
 mod log;
@@ -43,8 +44,8 @@ pub mod token_type;
 pub use crate::context::session::{LlamaStateSeqFlags, SeqState};
 
 #[cfg(feature = "common")]
-pub(crate) fn status_is_ok(status: llama_cpp_sys::llama_rs_status) -> bool {
-    status == llama_cpp_sys::LLAMA_RS_STATUS_OK
+pub(crate) fn status_is_ok(status: crate::llama_cpp_sys::llama_rs_status) -> bool {
+    status == crate::llama_cpp_sys::LLAMA_RS_STATUS_OK
 }
 
 /// A failable result from a llama.cpp function.
@@ -283,7 +284,7 @@ pub enum LlamaLoraAdapterRemoveError {
 /// ```
 #[must_use]
 pub fn llama_time_us() -> i64 {
-    unsafe { llama_cpp_sys::llama_time_us() }
+    unsafe { crate::llama_cpp_sys::llama_time_us() }
 }
 
 /// get the max number of devices according to llama.cpp (this is generally cuda devices)
@@ -294,7 +295,7 @@ pub fn llama_time_us() -> i64 {
 /// ```
 #[must_use]
 pub fn max_devices() -> usize {
-    unsafe { llama_cpp_sys::llama_max_devices() }
+    unsafe { crate::llama_cpp_sys::llama_max_devices() }
 }
 
 /// is memory mapping supported according to llama.cpp
@@ -307,7 +308,7 @@ pub fn max_devices() -> usize {
 /// ```
 #[must_use]
 pub fn mmap_supported() -> bool {
-    unsafe { llama_cpp_sys::llama_supports_mmap() }
+    unsafe { crate::llama_cpp_sys::llama_supports_mmap() }
 }
 
 /// is memory locking supported according to llama.cpp
@@ -320,7 +321,7 @@ pub fn mmap_supported() -> bool {
 /// ```
 #[must_use]
 pub fn mlock_supported() -> bool {
-    unsafe { llama_cpp_sys::llama_supports_mlock() }
+    unsafe { crate::llama_cpp_sys::llama_supports_mlock() }
 }
 
 /// Convert a JSON schema string into a llama.cpp grammar string.
@@ -330,7 +331,7 @@ pub fn json_schema_to_grammar(schema_json: &str) -> Result<String> {
         .map_err(|err| LlamaCppError::JsonSchemaToGrammarError(err.to_string()))?;
     let mut out = std::ptr::null_mut();
     let rc = unsafe {
-        llama_cpp_sys::llama_rs_json_schema_to_grammar(schema_cstr.as_ptr(), false, &mut out)
+        crate::llama_cpp_sys::llama_rs_json_schema_to_grammar(schema_cstr.as_ptr(), false, &mut out)
     };
 
     let result = {
@@ -346,7 +347,7 @@ pub fn json_schema_to_grammar(schema_json: &str) -> Result<String> {
         Ok(grammar)
     };
 
-    unsafe { llama_cpp_sys::llama_rs_string_free(out) };
+    unsafe { crate::llama_cpp_sys::llama_rs_string_free(out) };
     result
 }
 
@@ -450,7 +451,7 @@ pub enum SamplerAcceptError {
 /// assert!(elapsed >= 10)
 #[must_use]
 pub fn ggml_time_us() -> i64 {
-    unsafe { llama_cpp_sys::ggml_time_us() }
+    unsafe { crate::llama_cpp_sys::ggml_time_us() }
 }
 
 /// checks if mlock is supported
@@ -466,7 +467,7 @@ pub fn ggml_time_us() -> i64 {
 /// ```
 #[must_use]
 pub fn llama_supports_mlock() -> bool {
-    unsafe { llama_cpp_sys::llama_supports_mlock() }
+    unsafe { crate::llama_cpp_sys::llama_supports_mlock() }
 }
 
 /// Backend device type
@@ -511,7 +512,7 @@ pub struct LlamaBackendDevice {
 #[must_use]
 pub fn list_llama_ggml_backend_devices() -> Vec<LlamaBackendDevice> {
     let mut devices = Vec::new();
-    for i in 0..unsafe { llama_cpp_sys::ggml_backend_dev_count() } {
+    for i in 0..unsafe { crate::llama_cpp_sys::ggml_backend_dev_count() } {
         fn cstr_to_string(ptr: *const c_char) -> String {
             if ptr.is_null() {
                 String::new()
@@ -521,24 +522,28 @@ pub fn list_llama_ggml_backend_devices() -> Vec<LlamaBackendDevice> {
                     .to_string()
             }
         }
-        let dev = unsafe { llama_cpp_sys::ggml_backend_dev_get(i) };
+        let dev = unsafe { crate::llama_cpp_sys::ggml_backend_dev_get(i) };
         let props = unsafe {
             let mut props = std::mem::zeroed();
-            llama_cpp_sys::ggml_backend_dev_get_props(dev, &raw mut props);
+            crate::llama_cpp_sys::ggml_backend_dev_get_props(dev, &raw mut props);
             props
         };
         let name = cstr_to_string(props.name);
         let description = cstr_to_string(props.description);
-        let backend = unsafe { llama_cpp_sys::ggml_backend_dev_backend_reg(dev) };
-        let backend_name = unsafe { llama_cpp_sys::ggml_backend_reg_name(backend) };
+        let backend = unsafe { crate::llama_cpp_sys::ggml_backend_dev_backend_reg(dev) };
+        let backend_name = unsafe { crate::llama_cpp_sys::ggml_backend_reg_name(backend) };
         let backend = cstr_to_string(backend_name);
         let memory_total = props.memory_total;
         let memory_free = props.memory_free;
         let device_type = match props.type_ {
-            llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_CPU => LlamaBackendDeviceType::Cpu,
-            llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_ACCEL => LlamaBackendDeviceType::Accelerator,
-            llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_GPU => LlamaBackendDeviceType::Gpu,
-            llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_IGPU => LlamaBackendDeviceType::IntegratedGpu,
+            crate::llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_CPU => LlamaBackendDeviceType::Cpu,
+            crate::llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_ACCEL => {
+                LlamaBackendDeviceType::Accelerator
+            }
+            crate::llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_GPU => LlamaBackendDeviceType::Gpu,
+            crate::llama_cpp_sys::GGML_BACKEND_DEVICE_TYPE_IGPU => {
+                LlamaBackendDeviceType::IntegratedGpu
+            }
             _ => LlamaBackendDeviceType::Unknown,
         };
         devices.push(LlamaBackendDevice {
@@ -571,7 +576,7 @@ impl LogOptions {
 }
 
 extern "C" fn logs_to_trace(
-    level: llama_cpp_sys::ggml_log_level,
+    level: crate::llama_cpp_sys::ggml_log_level,
     text: *const ::std::os::raw::c_char,
     data: *mut ::std::os::raw::c_void,
 ) {
@@ -602,7 +607,7 @@ extern "C" fn logs_to_trace(
     // distinguish typo from intentional support for CONT, we have to buffer until the next message comes in
     // to know how to flush it.
 
-    if level == llama_cpp_sys::GGML_LOG_LEVEL_CONT {
+    if level == crate::llama_cpp_sys::GGML_LOG_LEVEL_CONT {
         log_state.cont_buffered_log(text);
     } else if text.ends_with('\n') {
         log_state.emit_non_cont_line(level, text);
@@ -629,7 +634,7 @@ pub fn send_logs_to_tracing(options: LogOptions) {
 
     unsafe {
         // GGML has to be set after llama since setting llama sets ggml as well.
-        llama_cpp_sys::llama_log_set(Some(logs_to_trace), llama_heap_state as *mut _);
-        llama_cpp_sys::ggml_log_set(Some(logs_to_trace), ggml_heap_state as *mut _);
+        crate::llama_cpp_sys::llama_log_set(Some(logs_to_trace), llama_heap_state as *mut _);
+        crate::llama_cpp_sys::ggml_log_set(Some(logs_to_trace), ggml_heap_state as *mut _);
     }
 }

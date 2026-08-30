@@ -12,8 +12,8 @@
 //! exercises the real vision encoder + projector + decode pipeline.
 //!
 //! The test image is `test-1.jpeg`, vendored directly in the llama.cpp
-//! submodule at `llama-cpp-sys/vendor/llama.cpp/tools/mtmd/test-1.jpeg` and
-//! used by llama.cpp's own mtmd CI (`tools/mtmd/tests.sh`).
+//! submodule at `vendor/llama.cpp/tools/mtmd/test-1.jpeg` and used by
+//! llama.cpp's own mtmd CI (`tools/mtmd/tests.sh`).
 //!
 //! Requires the `mtmd` feature; this whole file is a no-op test binary
 //! without it (the `mtmd` module doesn't exist otherwise), matching how
@@ -37,8 +37,7 @@ use std::sync::OnceLock;
 
 /// The vendored test image used by llama.cpp's own mtmd CI.
 fn test_image_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../llama-cpp-sys/vendor/llama.cpp/tools/mtmd/test-1.jpeg")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("vendor/llama.cpp/tools/mtmd/test-1.jpeg")
 }
 
 fn model_and_mmproj_paths() -> (PathBuf, PathBuf) {

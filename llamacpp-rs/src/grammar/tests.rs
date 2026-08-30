@@ -35,19 +35,19 @@ fn check_parse_simple() {
             symbol_ids: BTreeMap::from([("root".to_string(), 0),]),
             rules: vec![vec![
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR,
                     value: 'c' as u32,
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR,
                     value: 'a' as u32,
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR,
                     value: 't' as u32,
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_END,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_END,
                     value: 0,
                 }
             ]],
@@ -64,23 +64,23 @@ fn check_parse_char_range() {
             symbol_ids: BTreeMap::from([("root".to_string(), 0),]),
             rules: vec![vec![
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR,
                     value: 'a' as u32
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR_RNG_UPPER,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR_RNG_UPPER,
                     value: 'z' as u32
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR_ALT,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR_ALT,
                     value: 'A' as u32
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_CHAR_RNG_UPPER,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_CHAR_RNG_UPPER,
                     value: 'Z' as u32
                 },
                 llama_grammar_element {
-                    type_: llama_cpp_sys::LLAMA_GRETYPE_END,
+                    type_: crate::llama_cpp_sys::LLAMA_GRETYPE_END,
                     value: 0
                 }
             ]]

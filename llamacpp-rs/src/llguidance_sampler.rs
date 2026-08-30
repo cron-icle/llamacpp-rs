@@ -33,7 +33,7 @@ use crate::token::LlamaToken;
 pub fn llguidance_build_tok_env(model: &LlamaModel) -> TokEnv {
     let n_vocab = model.n_vocab().cast_unsigned();
     let tok_eos = {
-        let eot = unsafe { llama_cpp_sys::llama_vocab_eot(model.vocab_ptr()) };
+        let eot = unsafe { crate::llama_cpp_sys::llama_vocab_eot(model.vocab_ptr()) };
         if eot == -1 {
             model.token_eos().0.cast_unsigned()
         } else {
@@ -90,14 +90,14 @@ struct LlgContext {
 // --- extern "C" vtable callbacks ---
 
 unsafe extern "C" fn llg_name(
-    _smpl: *const llama_cpp_sys::llama_sampler,
+    _smpl: *const crate::llama_cpp_sys::llama_sampler,
 ) -> *const std::os::raw::c_char {
     c"llguidance".as_ptr()
 }
 
 unsafe extern "C" fn llg_accept(
-    smpl: *mut llama_cpp_sys::llama_sampler,
-    token: llama_cpp_sys::llama_token,
+    smpl: *mut crate::llama_cpp_sys::llama_sampler,
+    token: crate::llama_cpp_sys::llama_token,
 ) {
     let ctx = unsafe { &mut *(*smpl).ctx.cast::<LlgContext>() };
     // Consuming a token into an already-stopped parser errors and permanently
@@ -109,8 +109,8 @@ unsafe extern "C" fn llg_accept(
 }
 
 unsafe extern "C" fn llg_apply(
-    smpl: *mut llama_cpp_sys::llama_sampler,
-    cur_p: *mut llama_cpp_sys::llama_token_data_array,
+    smpl: *mut crate::llama_cpp_sys::llama_sampler,
+    cur_p: *mut crate::llama_cpp_sys::llama_token_data_array,
 ) {
     let ctx = unsafe { &mut *(*smpl).ctx.cast::<LlgContext>() };
     let cur_p = unsafe { &mut *cur_p };
@@ -127,45 +127,46 @@ unsafe extern "C" fn llg_apply(
     }
 }
 
-unsafe extern "C" fn llg_reset(smpl: *mut llama_cpp_sys::llama_sampler) {
+unsafe extern "C" fn llg_reset(smpl: *mut crate::llama_cpp_sys::llama_sampler) {
     let ctx = unsafe { &mut *(*smpl).ctx.cast::<LlgContext>() };
     let _ = ctx.matcher.reset();
 }
 
 unsafe extern "C" fn llg_clone(
-    smpl: *const llama_cpp_sys::llama_sampler,
-) -> *mut llama_cpp_sys::llama_sampler {
+    smpl: *const crate::llama_cpp_sys::llama_sampler,
+) -> *mut crate::llama_cpp_sys::llama_sampler {
     let ctx = unsafe { &*(*smpl).ctx.cast::<LlgContext>() };
     let new_ctx = Box::new(LlgContext {
         matcher: ctx.matcher.deep_clone(),
     });
     unsafe {
-        llama_cpp_sys::llama_sampler_init(
+        crate::llama_cpp_sys::llama_sampler_init(
             &raw mut LLG_SAMPLER_I,
             Box::into_raw(new_ctx).cast::<c_void>(),
         )
     }
 }
 
-unsafe extern "C" fn llg_free(smpl: *mut llama_cpp_sys::llama_sampler) {
+unsafe extern "C" fn llg_free(smpl: *mut crate::llama_cpp_sys::llama_sampler) {
     let ctx_ptr = unsafe { (*smpl).ctx.cast::<LlgContext>() };
     if !ctx_ptr.is_null() {
         drop(unsafe { Box::from_raw(ctx_ptr) });
     }
 }
 
-static mut LLG_SAMPLER_I: llama_cpp_sys::llama_sampler_i = llama_cpp_sys::llama_sampler_i {
-    name: Some(llg_name),
-    accept: Some(llg_accept),
-    apply: Some(llg_apply),
-    reset: Some(llg_reset),
-    clone: Some(llg_clone),
-    free: Some(llg_free),
-    backend_init: None,
-    backend_accept: None,
-    backend_apply: None,
-    backend_set_input: None,
-};
+static mut LLG_SAMPLER_I: crate::llama_cpp_sys::llama_sampler_i =
+    crate::llama_cpp_sys::llama_sampler_i {
+        name: Some(llg_name),
+        accept: Some(llg_accept),
+        apply: Some(llg_apply),
+        reset: Some(llg_reset),
+        clone: Some(llg_clone),
+        free: Some(llg_free),
+        backend_init: None,
+        backend_accept: None,
+        backend_apply: None,
+        backend_set_input: None,
+    };
 
 /// Wraps an already-built [`llguidance::Matcher`] into a [`LlamaSampler`].
 ///
@@ -178,7 +179,7 @@ impl From<Matcher> for LlamaSampler {
     fn from(matcher: Matcher) -> Self {
         let ctx = Box::new(LlgContext { matcher });
         let sampler = unsafe {
-            llama_cpp_sys::llama_sampler_init(
+            crate::llama_cpp_sys::llama_sampler_init(
                 &raw mut LLG_SAMPLER_I,
                 Box::into_raw(ctx).cast::<c_void>(),
             )

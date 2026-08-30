@@ -312,7 +312,7 @@ impl LlamaContextParams {
     #[must_use]
     pub fn with_flash_attention_policy(
         mut self,
-        policy: llama_cpp_sys::llama_flash_attn_type,
+        policy: crate::llama_cpp_sys::llama_flash_attn_type,
     ) -> Self {
         self.context_params.flash_attn_type = policy;
         self
@@ -320,7 +320,7 @@ impl LlamaContextParams {
 
     /// Get the flash attention policy
     #[must_use]
-    pub fn flash_attention_policy(&self) -> llama_cpp_sys::llama_flash_attn_type {
+    pub fn flash_attention_policy(&self) -> crate::llama_cpp_sys::llama_flash_attn_type {
         self.context_params.flash_attn_type
     }
 
@@ -751,7 +751,7 @@ mod tests {
             .with_rope_scaling_type(RopeScalingType::Yarn)
             .with_pooling_type(LlamaPoolingType::Mean)
             .with_attention_type(LlamaAttentionType::NonCausal)
-            .with_flash_attention_policy(llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED)
+            .with_flash_attention_policy(crate::llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED)
             .with_rope_freq_base(1.5)
             .with_rope_freq_scale(0.75)
             .with_yarn_ext_factor(0.5)
@@ -782,7 +782,7 @@ mod tests {
         assert_eq!(params.attention_type(), LlamaAttentionType::NonCausal);
         assert_eq!(
             params.flash_attention_policy(),
-            llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED
+            crate::llama_cpp_sys::LLAMA_FLASH_ATTN_TYPE_DISABLED
         );
         assert_eq!(params.rope_freq_base(), 1.5);
         assert_eq!(params.rope_freq_scale(), 0.75);

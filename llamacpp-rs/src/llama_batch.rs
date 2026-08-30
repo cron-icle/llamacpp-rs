@@ -1,7 +1,9 @@
 //! Safe wrapper around `llama_batch`.
 
+use crate::llama_cpp_sys::{
+    llama_batch, llama_batch_free, llama_batch_init, llama_pos, llama_seq_id,
+};
 use crate::token::LlamaToken;
-use llama_cpp_sys::{llama_batch, llama_batch_free, llama_batch_init, llama_pos, llama_seq_id};
 use std::marker::PhantomData;
 
 /// A safe wrapper around `llama_batch`.
@@ -12,7 +14,7 @@ pub struct LlamaBatch<'a> {
     /// The logits that are initialized. Used by [`LlamaContext`] to ensure that only initialized logits are accessed.
     pub(crate) initialized_logits: Vec<i32>,
     #[allow(clippy::doc_markdown)]
-    /// The llama_cpp batch. always initialize by `llama_cpp_sys::llama_batch_init(allocated, <unknown>, <unknown>)`
+    /// The llama_cpp batch. always initialize by `crate::llama_cpp_sys::llama_batch_init(allocated, <unknown>, <unknown>)`
     pub(crate) llama_batch: llama_batch,
     phantom: PhantomData<&'a [LlamaToken]>,
 }
@@ -172,7 +174,7 @@ impl<'a> LlamaBatch<'a> {
         }
         let batch = unsafe {
             let ptr = tokens.as_ptr() as *mut i32;
-            llama_cpp_sys::llama_batch_get_one(
+            crate::llama_cpp_sys::llama_batch_get_one(
                 ptr,
                 tokens
                     .len()

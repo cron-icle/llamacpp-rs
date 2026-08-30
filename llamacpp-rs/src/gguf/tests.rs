@@ -58,12 +58,12 @@ fn read_u32_value() {
 fn kv_type_string() {
     let ctx = GgufContext::from_file(Path::new(FIXTURE)).unwrap();
     let idx = ctx.find_key("general.architecture");
-    assert_eq!(ctx.kv_type(idx), llama_cpp_sys::GGUF_TYPE_STRING);
+    assert_eq!(ctx.kv_type(idx), crate::llama_cpp_sys::GGUF_TYPE_STRING);
 }
 
 #[test]
 fn kv_type_uint32() {
     let ctx = GgufContext::from_file(Path::new(FIXTURE)).unwrap();
     let idx = ctx.find_key("bert.block_count");
-    assert_eq!(ctx.kv_type(idx), llama_cpp_sys::GGUF_TYPE_UINT32);
+    assert_eq!(ctx.kv_type(idx), crate::llama_cpp_sys::GGUF_TYPE_UINT32);
 }
