@@ -8,13 +8,13 @@
 //! wget https://huggingface.co/Qwen/Qwen2-1.5B-Instruct-GGUF/resolve/main/qwen2-1_5b-instruct-q4_0.gguf
 //! cargo run --example usage -- qwen2-1_5b-instruct-q4_0.gguf
 //! ```
-use llama_cpp::context::params::LlamaContextParams;
-use llama_cpp::llama_backend::LlamaBackend;
-use llama_cpp::llama_batch::LlamaBatch;
-use llama_cpp::model::params::LlamaModelParams;
-use llama_cpp::model::LlamaModel;
-use llama_cpp::model::{AddBos, Special};
-use llama_cpp::sampling::LlamaSampler;
+use llamacpp_rs::context::params::LlamaContextParams;
+use llamacpp_rs::llama_backend::LlamaBackend;
+use llamacpp_rs::llama_batch::LlamaBatch;
+use llamacpp_rs::model::params::LlamaModelParams;
+use llamacpp_rs::model::LlamaModel;
+use llamacpp_rs::model::{AddBos, Special};
+use llamacpp_rs::sampling::LlamaSampler;
 use std::io::Write;
 
 #[allow(clippy::cast_possible_wrap, clippy::cast_possible_truncation)]

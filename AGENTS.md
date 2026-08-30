@@ -4,13 +4,19 @@ Guidance for coding agents working in this repository.
 
 ## Project layout
 
-- `llama-cpp-sys/` — low-level, unsafe FFI crate. Vendors upstream
-  `ggml-org/llama.cpp` as a git submodule at `llama-cpp-sys/vendor/llama.cpp`,
-  builds it via `cmake` in `build.rs`, and generates raw bindings with
-  `bindgen`. Hand-written glue headers/sources that bridge llama.cpp's C++
-  APIs to a flat C surface live under `llama-cpp-sys/ffi/`. Do not hand-edit
-  generated bindings.
-- `llama-cpp/` — safe, idiomatic Rust wrapper around the sys crate.
+`llamacpp-rs/` is the single publishable crate — everything lives inside it:
+
+- `llamacpp-rs/vendor/llama.cpp` — upstream `ggml-org/llama.cpp`, vendored
+  as a git submodule.
+- `llamacpp-rs/ffi/` — hand-written glue headers/sources that bridge
+  llama.cpp's C++ APIs to a flat C surface for `bindgen`.
+- `llamacpp-rs/build.rs` — builds llama.cpp via `cmake` and generates raw
+  bindings with `bindgen` into `OUT_DIR`.
+- `llamacpp-rs/src/llama_cpp_sys.rs` — private module that `include!`s the
+  generated raw bindings (`crate::llama_cpp_sys::...`). Do not hand-edit
+  generated bindings, and don't leak raw pointers or unsafe APIs from this
+  module into the safe wrapper's public surface.
+- `llamacpp-rs/src/*` (everything else) — the safe, idiomatic Rust wrapper.
   Most feature work (model loading, context/KV-cache, batching, sampling,
   grammars, chat templates, mtmd multimodal support) belongs here.
 - `examples/` — runnable examples (`simple`, `embeddings`, `reranker`,
@@ -30,16 +36,15 @@ git submodule update --init --recursive
 
 - This project tracks llama.cpp closely and does not follow semver
   meaningfully.
-- Keep unsafe FFI concerns in `llama-cpp-rs-sys` and safe abstractions in
-  `llama-cpp-rs` — don't leak raw pointers or unsafe APIs into the safe
-  wrapper's public surface.
 - Workspace lints (`missing_docs`, `missing_debug_implementations`,
   `clippy::pedantic`) are warnings — new public items should have docs.
+  The `llama_cpp_sys` module is exempted (`#![allow(...)]` at its top) since
+  it's generated code.
 
 ## Verification
 
 - `cargo build` / `cargo build --features cuda|metal|vulkan|rocm|opencl`
   as relevant to the change.
-- `cargo test` for the `llama-cpp-rs` crate.
+- `cargo test` for the `llamacpp-rs` crate.
 - `cargo run --release --bin simple -- ...` or the other examples for
   end-to-end checks against a real model when relevant.

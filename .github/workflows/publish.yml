@@ -1,0 +1,103 @@
+name: Publish to crates.io
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run only (no actual publish)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish llamacpp-rs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          submodules: recursive
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Publish only fires on an actual version bump: crates.io rejects
+      # re-publishing an unchanged version, and every merge to main isn't
+      # a release, so compare Cargo.toml's version against what's already
+      # live before doing anything else.
+      - name: Check whether the crate version changed
+        id: version_check
+        run: |
+          local_version="$(cargo metadata --no-deps --format-version 1 | \
+            jq -r '.packages[] | select(.name == "llamacpp-rs") | .version')"
+          echo "local_version=$local_version" >> "$GITHUB_OUTPUT"
+
+          published_version="$(curl -sSf https://crates.io/api/v1/crates/llamacpp-rs \
+            | jq -r '.crate.max_stable_version // .crate.max_version // empty' || true)"
+          echo "published_version=$published_version" >> "$GITHUB_OUTPUT"
+
+          echo "Local version:     $local_version"
+          echo "Published version: ${published_version:-<not published yet>}"
+
+          if [ "$local_version" = "$published_version" ]; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install compile deps
+        if: ${{ steps.version_check.outputs.should_publish == 'true' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl libssl-dev libclang-dev pkg-config cmake git
+
+      - name: Cache cargo registry and build artifacts
+        if: ${{ steps.version_check.outputs.should_publish == 'true' || (github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          # llama.cpp's cmake build lives under target/ keyed by build.rs +
+          # the pinned submodule commit; the vendored source itself doesn't
+          # change between runs of this workflow unless the submodule moves.
+          key: ${{ runner.os }}-publish-cargo-${{ hashFiles('Cargo.lock', 'llamacpp-rs/build.rs') }}-${{ hashFiles('.gitmodules') }}
+          restore-keys: |
+            ${{ runner.os }}-publish-cargo-
+
+      - name: Test
+        if: ${{ steps.version_check.outputs.should_publish == 'true' }}
+        run: cargo test -p llamacpp-rs --features sampler
+
+      - name: Publish (dry run)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: cargo publish -p llamacpp-rs --dry-run --verbose
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Publish
+        if: ${{ steps.version_check.outputs.should_publish == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: cargo publish -p llamacpp-rs --verbose
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      # Tag the release commit after a successful publish so the version
+      # history stays visible on GitHub too, matching what crates.io has.
+      - name: Tag release
+        if: ${{ steps.version_check.outputs.should_publish == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          tag="v${{ steps.version_check.outputs.local_version }}"
+          git tag "$tag"
+          git push origin "$tag"

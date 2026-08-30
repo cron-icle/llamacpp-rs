@@ -6,13 +6,13 @@
 //! cargo run --example llguidance --features llguidance -- <path_to_model>
 //! ```
 
-use llama_cpp::context::params::LlamaContextParams;
-use llama_cpp::llama_backend::LlamaBackend;
-use llama_cpp::llama_batch::LlamaBatch;
-use llama_cpp::model::params::LlamaModelParams;
-use llama_cpp::model::AddBos;
-use llama_cpp::model::LlamaModel;
-use llama_cpp::sampling::LlamaSampler;
+use llamacpp_rs::context::params::LlamaContextParams;
+use llamacpp_rs::llama_backend::LlamaBackend;
+use llamacpp_rs::llama_batch::LlamaBatch;
+use llamacpp_rs::model::params::LlamaModelParams;
+use llamacpp_rs::model::AddBos;
+use llamacpp_rs::model::LlamaModel;
+use llamacpp_rs::sampling::LlamaSampler;
 use llguidance::api::TopLevelGrammar;
 use llguidance::{Matcher, ParserFactory};
 use std::io::Write;
