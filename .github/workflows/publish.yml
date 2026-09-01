@@ -105,4 +105,8 @@ jobs:
         run: |
           tag="v${{ steps.version_check.outputs.local_version }}"
           git tag "$tag"
-          git push origin "$tag"
+          output="$(git push origin "$tag" 2>&1)" && status=0 || status=$?
+          echo "$output"
+          if [ "$status" -ne 0 ] && ! grep -q "already exists" <<< "$output"; then
+            exit "$status"
+          fi
