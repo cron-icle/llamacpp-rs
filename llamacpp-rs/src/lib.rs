@@ -7,8 +7,10 @@
 //!
 //! # Examples
 //!
-//! - [simple](<this-repo-url>/tree/main/examples/simple)
-//! - [tools](<this-repo-url>/tree/main/examples/tools)
+//! - [simple](https://github.com/cron-icle/llamacpp-rs/tree/main/examples/simple)
+//! - [embeddings](https://github.com/cron-icle/llamacpp-rs/tree/main/examples/embeddings)
+//! - [mtmd](https://github.com/cron-icle/llamacpp-rs/tree/main/examples/mtmd)
+//! - [reranker](https://github.com/cron-icle/llamacpp-rs/tree/main/examples/reranker)
 //!
 //! # Feature Flags
 //!

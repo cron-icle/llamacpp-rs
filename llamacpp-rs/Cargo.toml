@@ -1,6 +1,6 @@
 [package]
 name = "llamacpp-rs"
-description = "llama.cpp bindings for Rust (Chronicle fork, mtmd enabled by default)"
+description = "Rust bindings for llama.cpp, with mtmd (multimodal) support enabled by default"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
